@@ -104,6 +104,7 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
+
     @PostMapping("/{id}/change-password")
     public ResponseEntity <Void> changePassword(
             @PathVariable long id,
@@ -113,21 +114,13 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
 
-        if (!user.getPassword().equals(request.getOldPassword())) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        user.setPassword(request.getNewPassword());
+
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         userRepository.save(user);
         return ResponseEntity.noContent().build();
-    }
-
-
-    public UserRepository getUserRepository() {
-        return userRepository;
-    }
-
-    public UserMapper getUserMapper() {
-        return userMapper;
     }
 }
 
