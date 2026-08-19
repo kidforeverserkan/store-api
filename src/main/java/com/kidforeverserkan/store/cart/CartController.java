@@ -1,12 +1,7 @@
-package com.kidforeverserkan.store.controllers;
+package com.kidforeverserkan.store.cart;
 
-import com.kidforeverserkan.store.dtos.AddItemToCartRequest;
-import com.kidforeverserkan.store.dtos.CartDto;
-import com.kidforeverserkan.store.dtos.CartItemDto;
-import com.kidforeverserkan.store.dtos.UpdateCartItemRequest;
 import com.kidforeverserkan.store.exceptions.CartNotFoundException;
 import com.kidforeverserkan.store.exceptions.ProductNotFoundException;
-import com.kidforeverserkan.store.service.CartService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

@@ -1,6 +1,5 @@
-package com.kidforeverserkan.store.repositories;
+package com.kidforeverserkan.store.cart;
 
-import com.kidforeverserkan.store.entities.Cart;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

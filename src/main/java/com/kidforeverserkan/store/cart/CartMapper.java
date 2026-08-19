@@ -1,9 +1,5 @@
-package com.kidforeverserkan.store.mappers;
+package com.kidforeverserkan.store.cart;
 
-import com.kidforeverserkan.store.dtos.CartDto;
-import com.kidforeverserkan.store.dtos.CartItemDto;
-import com.kidforeverserkan.store.entities.Cart;
-import com.kidforeverserkan.store.entities.CartItem;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

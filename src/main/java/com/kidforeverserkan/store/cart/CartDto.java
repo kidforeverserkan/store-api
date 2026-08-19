@@ -1,4 +1,4 @@
-package com.kidforeverserkan.store.dtos;
+package com.kidforeverserkan.store.cart;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;

@@ -1,4 +1,4 @@
-package com.kidforeverserkan.store.entities;
+package com.kidforeverserkan.store.cart;
 
 import com.kidforeverserkan.store.products.Product;
 import jakarta.persistence.*;

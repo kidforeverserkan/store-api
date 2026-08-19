@@ -1,12 +1,7 @@
-package com.kidforeverserkan.store.service;
+package com.kidforeverserkan.store.cart;
 
-import com.kidforeverserkan.store.dtos.CartDto;
-import com.kidforeverserkan.store.dtos.CartItemDto;
-import com.kidforeverserkan.store.entities.Cart;
 import com.kidforeverserkan.store.exceptions.CartNotFoundException;
 import com.kidforeverserkan.store.exceptions.ProductNotFoundException;
-import com.kidforeverserkan.store.mappers.CartMapper;
-import com.kidforeverserkan.store.repositories.CartRepository;
 import com.kidforeverserkan.store.products.ProductRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
