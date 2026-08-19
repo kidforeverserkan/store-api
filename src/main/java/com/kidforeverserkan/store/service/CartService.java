@@ -7,7 +7,7 @@ import com.kidforeverserkan.store.exceptions.CartNotFoundException;
 import com.kidforeverserkan.store.exceptions.ProductNotFoundException;
 import com.kidforeverserkan.store.mappers.CartMapper;
 import com.kidforeverserkan.store.repositories.CartRepository;
-import com.kidforeverserkan.store.repositories.ProductRepository;
+import com.kidforeverserkan.store.products.ProductRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 

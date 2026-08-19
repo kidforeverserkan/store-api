@@ -1,5 +1,6 @@
     package com.kidforeverserkan.store.entities;
 
+    import com.kidforeverserkan.store.products.Product;
     import jakarta.persistence.*;
     import lombok.Getter;
     import lombok.Setter;

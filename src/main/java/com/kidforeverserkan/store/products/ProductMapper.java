@@ -1,7 +1,5 @@
-package com.kidforeverserkan.store.mappers;
+package com.kidforeverserkan.store.products;
 
-import com.kidforeverserkan.store.dtos.ProductDto;
-import com.kidforeverserkan.store.entities.Product;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;

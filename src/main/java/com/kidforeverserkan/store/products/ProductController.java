@@ -1,9 +1,5 @@
-package com.kidforeverserkan.store.controllers;
-import com.kidforeverserkan.store.dtos.ProductDto;
-import com.kidforeverserkan.store.entities.Product;
-import com.kidforeverserkan.store.mappers.ProductMapper;
+package com.kidforeverserkan.store.products;
 import com.kidforeverserkan.store.repositories.CategoryRepository;
-import com.kidforeverserkan.store.repositories.ProductRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
