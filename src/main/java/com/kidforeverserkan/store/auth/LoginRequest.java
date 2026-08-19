@@ -1,4 +1,4 @@
-package com.kidforeverserkan.store.dtos;
+package com.kidforeverserkan.store.auth;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

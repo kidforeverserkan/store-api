@@ -1,6 +1,6 @@
         package com.kidforeverserkan.store.payments;
 
-        import com.kidforeverserkan.store.dtos.ErrorDto;
+        import com.kidforeverserkan.store.exceptions.ErrorDto;
         import com.kidforeverserkan.store.exceptions.CartEmptyException;
         import com.kidforeverserkan.store.exceptions.CartNotFoundException;
         import com.kidforeverserkan.store.orders.OrderRepository;

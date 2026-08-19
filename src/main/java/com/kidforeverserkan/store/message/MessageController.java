@@ -1,7 +1,6 @@
-package com.kidforeverserkan.store.controllers;
+package com.kidforeverserkan.store.message;
 
 
-import com.kidforeverserkan.store.entities.Message;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 

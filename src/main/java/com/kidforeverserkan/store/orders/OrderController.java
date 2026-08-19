@@ -1,6 +1,6 @@
 package com.kidforeverserkan.store.orders;
 
-import com.kidforeverserkan.store.dtos.ErrorDto;
+import com.kidforeverserkan.store.exceptions.ErrorDto;
 import com.kidforeverserkan.store.exceptions.OrderNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;

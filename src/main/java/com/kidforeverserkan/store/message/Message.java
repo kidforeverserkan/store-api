@@ -1,4 +1,4 @@
-package com.kidforeverserkan.store.entities;
+package com.kidforeverserkan.store.message;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

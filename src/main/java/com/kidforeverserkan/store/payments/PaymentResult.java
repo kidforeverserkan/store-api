@@ -1,6 +1,5 @@
 package com.kidforeverserkan.store.payments;
 
-import com.kidforeverserkan.store.entities.PaymentStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

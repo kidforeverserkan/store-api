@@ -1,5 +1,4 @@
 package com.kidforeverserkan.store.products;
-import com.kidforeverserkan.store.repositories.CategoryRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
