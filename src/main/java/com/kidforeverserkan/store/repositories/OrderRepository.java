@@ -1,7 +1,7 @@
 package com.kidforeverserkan.store.repositories;
 
 import com.kidforeverserkan.store.entities.Order;
-import com.kidforeverserkan.store.entities.User;
+import com.kidforeverserkan.store.users.User;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

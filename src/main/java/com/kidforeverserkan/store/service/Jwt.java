@@ -1,6 +1,6 @@
 package com.kidforeverserkan.store.service;
 
-import com.kidforeverserkan.store.entities.Role;
+import com.kidforeverserkan.store.users.Role;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 

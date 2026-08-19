@@ -1,6 +1,5 @@
-package com.kidforeverserkan.store.service;
+package com.kidforeverserkan.store.users;
 
-import com.kidforeverserkan.store.repositories.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;

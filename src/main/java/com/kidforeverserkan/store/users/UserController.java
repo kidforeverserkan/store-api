@@ -1,12 +1,5 @@
-package com.kidforeverserkan.store.controllers;
+package com.kidforeverserkan.store.users;
 
-import com.kidforeverserkan.store.controllers.dtos.UserDto;
-import com.kidforeverserkan.store.dtos.ChangePasswordRequest;
-import com.kidforeverserkan.store.dtos.RegisterUserRequest;
-import com.kidforeverserkan.store.dtos.UpdateUserRequest;
-import com.kidforeverserkan.store.entities.Role;
-import com.kidforeverserkan.store.mappers.UserMapper;
-import com.kidforeverserkan.store.repositories.UserRepository;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Sort;

@@ -1,6 +1,6 @@
 package com.kidforeverserkan.store.config;
 
-import com.kidforeverserkan.store.entities.Role;
+import com.kidforeverserkan.store.users.Role;
 import com.kidforeverserkan.store.filters.JwtAuthenticationFilter;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;

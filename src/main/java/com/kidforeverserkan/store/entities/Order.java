@@ -1,5 +1,6 @@
     package com.kidforeverserkan.store.entities;
 
+    import com.kidforeverserkan.store.users.User;
     import jakarta.persistence.*;
     import lombok.Getter;
     import lombok.Setter;
@@ -40,7 +41,7 @@
         private Set<OrderItem> items = new LinkedHashSet<>();
 
 
-        public static Order fromCart(Cart cart,User customer) {
+        public static Order fromCart(Cart cart, User customer) {
             var order = new Order();
             order.setCustomer(customer);
             order.setStatus(PaymentStatus.PENDING);

@@ -1,6 +1,5 @@
-package com.kidforeverserkan.store.repositories;
+package com.kidforeverserkan.store.users;
 
-import com.kidforeverserkan.store.entities.Address;
 import org.springframework.data.repository.CrudRepository;
 
 public interface AddressRepository extends CrudRepository<Address, Long> {

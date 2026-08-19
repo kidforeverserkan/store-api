@@ -1,6 +1,5 @@
-package com.kidforeverserkan.store.repositories;
+package com.kidforeverserkan.store.users;
 
-import com.kidforeverserkan.store.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

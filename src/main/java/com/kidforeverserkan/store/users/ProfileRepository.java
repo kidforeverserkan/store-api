@@ -1,6 +1,5 @@
-package com.kidforeverserkan.store.repositories;
+package com.kidforeverserkan.store.users;
 
-import com.kidforeverserkan.store.entities.Profile;
 import org.springframework.data.repository.CrudRepository;
 
 public interface ProfileRepository extends CrudRepository<Profile, Long> {

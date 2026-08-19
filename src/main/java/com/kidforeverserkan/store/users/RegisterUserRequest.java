@@ -1,5 +1,4 @@
-package com.kidforeverserkan.store.dtos;
-import com.kidforeverserkan.store.validation.Lowercase;
+package com.kidforeverserkan.store.users;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

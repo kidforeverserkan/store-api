@@ -1,7 +1,7 @@
 package com.kidforeverserkan.store.service;
 
 import com.kidforeverserkan.store.config.JwtConfig;
-import com.kidforeverserkan.store.entities.User;
+import com.kidforeverserkan.store.users.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;

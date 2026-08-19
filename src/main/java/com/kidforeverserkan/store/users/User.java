@@ -1,5 +1,6 @@
-package com.kidforeverserkan.store.entities;
+package com.kidforeverserkan.store.users;
 
+import com.kidforeverserkan.store.entities.Product;
 import jakarta.persistence.*;
 import lombok.*;
 

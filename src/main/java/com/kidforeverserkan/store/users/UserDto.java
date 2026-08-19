@@ -1,4 +1,4 @@
-package com.kidforeverserkan.store.controllers.dtos;
+package com.kidforeverserkan.store.users;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
