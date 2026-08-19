@@ -1,5 +1,6 @@
 package com.kidforeverserkan.store.service;
 
+import com.kidforeverserkan.store.auth.AuthService;
 import com.kidforeverserkan.store.dtos.OrderDto;
 import com.kidforeverserkan.store.exceptions.OrderNotFoundException;
 import com.kidforeverserkan.store.mappers.OrderMapper;

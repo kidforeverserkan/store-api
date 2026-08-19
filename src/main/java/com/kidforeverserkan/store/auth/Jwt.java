@@ -1,4 +1,4 @@
-package com.kidforeverserkan.store.service;
+package com.kidforeverserkan.store.auth;
 
 import com.kidforeverserkan.store.users.Role;
 import io.jsonwebtoken.Claims;

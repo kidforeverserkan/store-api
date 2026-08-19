@@ -1,6 +1,6 @@
 package com.kidforeverserkan.store.filters;
 
-import com.kidforeverserkan.store.service.JwtService;
+import com.kidforeverserkan.store.auth.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

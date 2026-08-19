@@ -1,12 +1,10 @@
-package com.kidforeverserkan.store.controllers;
+package com.kidforeverserkan.store.auth;
 
 import com.kidforeverserkan.store.config.JwtConfig;
 import com.kidforeverserkan.store.users.UserDto;
-import com.kidforeverserkan.store.dtos.JwtResponse;
 import com.kidforeverserkan.store.dtos.LoginRequest;
 import com.kidforeverserkan.store.users.UserMapper;
 import com.kidforeverserkan.store.users.UserRepository;
-import com.kidforeverserkan.store.service.JwtService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;

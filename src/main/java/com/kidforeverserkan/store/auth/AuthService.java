@@ -1,4 +1,4 @@
-package com.kidforeverserkan.store.service;
+package com.kidforeverserkan.store.auth;
 
 import com.kidforeverserkan.store.users.User;
 import com.kidforeverserkan.store.users.UserRepository;
