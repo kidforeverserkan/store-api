@@ -1,7 +1,7 @@
 package com.kidforeverserkan.store.payments;
 
-import com.kidforeverserkan.store.entities.Order;
-import com.kidforeverserkan.store.entities.OrderItem;
+import com.kidforeverserkan.store.orders.Order;
+import com.kidforeverserkan.store.orders.OrderItem;
 import com.kidforeverserkan.store.entities.PaymentStatus;
 import com.stripe.exception.SignatureVerificationException;
 import com.stripe.exception.StripeException;

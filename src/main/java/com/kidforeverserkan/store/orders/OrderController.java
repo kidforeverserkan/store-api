@@ -1,9 +1,7 @@
-package com.kidforeverserkan.store.controllers;
+package com.kidforeverserkan.store.orders;
 
 import com.kidforeverserkan.store.dtos.ErrorDto;
-import com.kidforeverserkan.store.dtos.OrderDto;
 import com.kidforeverserkan.store.exceptions.OrderNotFoundException;
-import com.kidforeverserkan.store.service.OrderService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

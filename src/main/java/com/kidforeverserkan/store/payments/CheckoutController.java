@@ -3,7 +3,7 @@
         import com.kidforeverserkan.store.dtos.ErrorDto;
         import com.kidforeverserkan.store.exceptions.CartEmptyException;
         import com.kidforeverserkan.store.exceptions.CartNotFoundException;
-        import com.kidforeverserkan.store.repositories.OrderRepository;
+        import com.kidforeverserkan.store.orders.OrderRepository;
         import lombok.RequiredArgsConstructor;
         import org.springframework.http.HttpStatus;
         import org.springframework.http.ResponseEntity;

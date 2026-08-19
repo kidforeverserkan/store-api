@@ -1,6 +1,6 @@
 package com.kidforeverserkan.store.payments;
 
-import com.kidforeverserkan.store.entities.Order;
+import com.kidforeverserkan.store.orders.Order;
 
 import java.util.Optional;
 

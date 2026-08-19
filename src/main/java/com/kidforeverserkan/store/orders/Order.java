@@ -1,5 +1,7 @@
-    package com.kidforeverserkan.store.entities;
+    package com.kidforeverserkan.store.orders;
 
+    import com.kidforeverserkan.store.entities.Cart;
+    import com.kidforeverserkan.store.entities.PaymentStatus;
     import com.kidforeverserkan.store.users.User;
     import jakarta.persistence.*;
     import lombok.Getter;

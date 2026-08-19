@@ -1,4 +1,4 @@
-package com.kidforeverserkan.store.dtos;
+package com.kidforeverserkan.store.orders;
 
 import lombok.Data;
 
