@@ -1,0 +1,10 @@
+package com.kidforeverserkan.store.entities;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@AllArgsConstructor
+@Getter
+public class Message {
+    private java.lang.String text;
+}
