@@ -37,10 +37,15 @@ public class CartController {
             description = "Creates a new empty shopping cart and returns its unique identifier."
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Shopping cart created successfully")
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "Shopping cart created successfully"
+            )
     })
     @PostMapping
-    public ResponseEntity<CartDto> createCart(UriComponentsBuilder uriBuilder) {
+    public ResponseEntity<CartDto> createCart(
+            UriComponentsBuilder uriBuilder
+    ) {
 
         var cartDto = cartService.createCart();
 
@@ -49,7 +54,9 @@ public class CartController {
                 .buildAndExpand(cartDto.getId())
                 .toUri();
 
-        return ResponseEntity.created(uri).body(cartDto);
+        return ResponseEntity
+                .created(uri)
+                .body(cartDto);
     }
 
     // -------------------------------------------------------------------------
@@ -61,23 +68,39 @@ public class CartController {
             description = "Adds one quantity of the specified product to the shopping cart."
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Product added successfully"),
-            @ApiResponse(responseCode = "400", description = "Product not found"),
-            @ApiResponse(responseCode = "404", description = "Cart not found")
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "Product added successfully"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Invalid product ID or product not found"
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Cart not found"
+            )
     })
     @PostMapping("/{cartId}/items")
     public ResponseEntity<CartItemDto> addToCart(
 
-            @Parameter(description = "Unique identifier of the shopping cart.")
+            @Parameter(
+                    description = "Unique identifier of the shopping cart."
+            )
             @PathVariable UUID cartId,
 
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "The product to add to the shopping cart."
             )
-            @RequestBody AddItemToCartRequest request) {
+            @Valid
+            @RequestBody AddItemToCartRequest request
+    ) {
 
         var cartItemDto =
-                cartService.addToCart(cartId, request.getProductId());
+                cartService.addToCart(
+                        cartId,
+                        request.getProductId()
+                );
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -93,14 +116,23 @@ public class CartController {
             description = "Returns a shopping cart including all products and the total price."
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Shopping cart retrieved successfully"),
-            @ApiResponse(responseCode = "404", description = "Cart not found")
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Shopping cart retrieved successfully"
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Cart not found"
+            )
     })
     @GetMapping("/{cartId}")
     public ResponseEntity<CartDto> getCart(
 
-            @Parameter(description = "Unique identifier of the shopping cart.")
-            @PathVariable UUID cartId) {
+            @Parameter(
+                    description = "Unique identifier of the shopping cart."
+            )
+            @PathVariable UUID cartId
+    ) {
 
         var cartDto = cartService.getCart(cartId);
 
@@ -116,27 +148,45 @@ public class CartController {
             description = "Updates the quantity of a product already in the shopping cart."
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Product quantity updated successfully"),
-            @ApiResponse(responseCode = "400", description = "Product not found"),
-            @ApiResponse(responseCode = "404", description = "Cart not found")
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Product quantity updated successfully"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Invalid quantity or product not found"
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Cart not found"
+            )
     })
     @PutMapping("/{cartId}/items/{productId}")
     public ResponseEntity<CartItemDto> updateCart(
 
-            @Parameter(description = "Unique identifier of the shopping cart.")
+            @Parameter(
+                    description = "Unique identifier of the shopping cart."
+            )
             @PathVariable UUID cartId,
 
-            @Parameter(description = "Unique identifier of the product.")
+            @Parameter(
+                    description = "Unique identifier of the product."
+            )
             @PathVariable Long productId,
 
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "The new quantity for the product."
             )
             @Valid
-            @RequestBody UpdateCartItemRequest request) {
+            @RequestBody UpdateCartItemRequest request
+    ) {
 
         var cartItemDto =
-                cartService.updateCart(cartId, productId, request.getQuantity());
+                cartService.updateCart(
+                        cartId,
+                        productId,
+                        request.getQuantity()
+                );
 
         return ResponseEntity.ok(cartItemDto);
     }
@@ -150,18 +200,32 @@ public class CartController {
             description = "Removes the specified product from the shopping cart."
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "Product removed successfully"),
-            @ApiResponse(responseCode = "400", description = "Product not found"),
-            @ApiResponse(responseCode = "404", description = "Cart not found")
+            @ApiResponse(
+                    responseCode = "204",
+                    description = "Product removed successfully"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Product not found"
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Cart not found"
+            )
     })
     @DeleteMapping("/{cartId}/items/{productId}")
     public ResponseEntity<Void> removeItemFromCart(
 
-            @Parameter(description = "Unique identifier of the shopping cart.")
+            @Parameter(
+                    description = "Unique identifier of the shopping cart."
+            )
             @PathVariable UUID cartId,
 
-            @Parameter(description = "Unique identifier of the product.")
-            @PathVariable Long productId) {
+            @Parameter(
+                    description = "Unique identifier of the product."
+            )
+            @PathVariable Long productId
+    ) {
 
         cartService.removeItemFromCart(cartId, productId);
 
@@ -177,14 +241,23 @@ public class CartController {
             description = "Removes all products from the shopping cart."
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "Shopping cart cleared successfully"),
-            @ApiResponse(responseCode = "404", description = "Cart not found")
+            @ApiResponse(
+                    responseCode = "204",
+                    description = "Shopping cart cleared successfully"
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Cart not found"
+            )
     })
     @DeleteMapping("/{cartId}/items")
     public ResponseEntity<Void> clearCart(
 
-            @Parameter(description = "Unique identifier of the shopping cart.")
-            @PathVariable UUID cartId) {
+            @Parameter(
+                    description = "Unique identifier of the shopping cart."
+            )
+            @PathVariable UUID cartId
+    ) {
 
         cartService.clearCart(cartId);
 
@@ -198,14 +271,16 @@ public class CartController {
     @ExceptionHandler(CartNotFoundException.class)
     public ResponseEntity<Map<String, String>> handleCartNotFound() {
 
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
                 .body(Map.of("error", "Cart not found."));
     }
 
     @ExceptionHandler(ProductNotFoundException.class)
     public ResponseEntity<Map<String, String>> handleProductNotFound() {
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
                 .body(Map.of("error", "Product not found."));
     }
 }
