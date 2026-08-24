@@ -129,11 +129,15 @@ http://localhost:8080
 
 ## API Documentation
 
-Swagger UI is available at:
+### Local Development
+
+Swagger UI is available locally when the application is running:
 
 http://localhost:8080/swagger-ui/index.html
 
-The deployed API documentation is available at:
+### Live API Documentation
+
+The deployed Swagger UI is available at:
 
 https://store-api-production-a508.up.railway.app/swagger-ui/index.html
 
