@@ -14,8 +14,9 @@ backend. It is not a separate application with its own server-side logic.
 
 ## Try the Demo
 
-> **Live demo:** not deployed yet. The URL will be added here once the
-> Railway deployment is live.
+> **Live demo:** <https://store-api-production-183a.up.railway.app>, deployed
+> on Railway. Payments run in **Stripe test (sandbox) mode**: pay with the
+> test card below. No real money is charged, and real cards can't be used.
 
 **Shared public demo account.** These credentials are intentionally public
 so anyone can try the store:
@@ -87,7 +88,7 @@ pages) consumes this API from the browser.
 | Storefront | Thymeleaf, vanilla JavaScript (ES modules), CSS |
 | Testing | JUnit 5, Spring MockMvc, H2 (in-memory), Playwright 1.63.0 |
 | Build | Maven (wrapper included) |
-| Deployment target | Railway (`railway.json`) |
+| Deployment | Railway (live): app service + MySQL service; see [Railway Deployment](#railway-deployment) |
 
 ---
 
@@ -496,6 +497,11 @@ There is **no CI pipeline**. Both suites are run manually.
 
 ## API / Swagger
 
+Live deployment:
+
+- Swagger UI: <https://store-api-production-183a.up.railway.app/swagger-ui/index.html>
+- OpenAPI JSON: <https://store-api-production-183a.up.railway.app/v3/api-docs>
+
 With the application running locally:
 
 - Swagger UI: `http://localhost:8080/swagger-ui/index.html`
@@ -586,6 +592,9 @@ Claude Code assisted with:
 - **Testing**: writing and running integration and browser tests.
 - **Reviews and audits**: security/RBAC reviews, repository clean-up, and
   deployment-readiness and documentation audits, including this README.
+- **Deployment**: the Railway and Stripe test-mode setup through their CLI
+  and API, and the production smoke test, which I directed and approved
+  step by step.
 - **Development tooling**: local database inspection and clean-up, and
   test runs.
 
@@ -687,39 +696,70 @@ by Railway.
 
 ## Railway Deployment
 
-> **Status:** the project is **not deployed yet**. This section describes
-> the intended setup.
+> **Status: deployed.** The application runs on Railway at
+> <https://store-api-production-183a.up.railway.app>, with Stripe in
+> **test (sandbox) mode only**. It doesn't accept real payments.
 
-The repository contains `railway.json` (Nixpacks build, start command
-`java -jar target/store-0.0.1-SNAPSHOT.jar`, health check on
-`/actuator/health`, restart on failure) and an `application-prod.yaml`
-profile (datasource from environment variables, forwarded-header support
-behind Railway's HTTPS proxy).
+### Current deployment
 
-Steps:
+| Part | Configuration |
+|---|---|
+| Services | `Store API` (built from GitHub `main`, redeploys on push) and a `MySQL` database service, in one Railway project |
+| Build | Railway's **Railpack** builder detects the Maven project and Java 21 from `pom.xml`, and starts the packaged jar |
+| Runtime | Java 21, Spring profile `prod` |
+| Health check | `/actuator/health`, set in the Railway service settings; Railway only marks a deployment healthy once it returns `200` |
+| Database | A fresh MySQL database. `DB_URL`, `DB_USERNAME` and `DB_PASSWORD` are Railway reference variables pointing at the MySQL service (JDBC URL over Railway's private network). Flyway applied V1–V7 on the first start (schema version 7) |
+| Secrets | `JWT_SECRET`, `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET_KEY` exist only as Railway variables, never in the repository |
+| Stripe | Test-mode webhook endpoint `/checkout/webhook` for `payment_intent.succeeded` and `payment_intent.payment_failed`, pinned to API version `2026-07-29.dahlia` (the version `stripe-java` 33.3.0 expects) |
+| Demo account | Registered through the normal `POST /users` flow; `DEMO_ACCOUNT_EMAIL` protects it |
 
-1. **Java 21 build.** The project compiles for Java 21. Nixpacks defaults
-   to JDK 17 unless `NIXPACKS_JDK_VERSION=21` is set, so make sure the build
-   uses JDK 21.
-2. **MySQL.** Add a MySQL service and set `DB_URL` (JDBC form),
-   `DB_USERNAME` and `DB_PASSWORD`.
-3. **Variables.** Set `SPRING_PROFILES_ACTIVE=prod`, `JWT_SECRET`,
-   `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET_KEY`, `WEBSITE_URL`
-   (the public Railway URL) and `DEMO_ACCOUNT_EMAIL`.
-4. **Deploy and check health.** Flyway migrates the database on startup.
-   Railway only switches traffic once `/actuator/health` returns `200`.
-5. **Stripe webhook.** In the Stripe dashboard (test mode), add an endpoint
+**Production smoke test (September 2026).** The following were verified
+against the live deployment:
+- Registration and login (storefront and API), `/auth/me` with the demo
+  flag, the `USER` role, and `403` on admin endpoints.
+- All 58 products and their 58 images, product pages, and DKK/EUR
+  switching that persists across reloads and navigation.
+- The cart and quantity totals.
+- A real **Stripe test-mode** Checkout payment. Stripe delivered the
+  webhook (`POST /checkout/webhook` → `200`), the order was marked `Paid`,
+  and it appears in the order history in the currency it was charged in,
+  even with the selector set to EUR.
+- The demo-account guard, and `/actuator/health` → `200 {"status":"UP"}`.
+
+**Notes from the deployment:**
+- The live service does not use `railway.json`. Railway builds with
+  Railpack, and the health check lives in the service settings. The file
+  stays in the repository as a record of the intended configuration.
+- Flyway logs a warning that MySQL 9.4 (Railway's MySQL image) is newer than
+  the MySQL versions it has been tested with. The migrations ran without
+  problems.
+
+### Deploying your own copy
+
+1. **Services.** Create a Railway project with a MySQL service and a service
+   from this repository.
+2. **Build and health.** Railpack detects Java 21 from `pom.xml`. Set the
+   service's health-check path to `/actuator/health`.
+3. **Database variables.** Point `DB_URL`
+   (`jdbc:mysql://${{MySQL.MYSQLHOST}}:${{MySQL.MYSQLPORT}}/${{MySQL.MYSQLDATABASE}}`),
+   `DB_USERNAME` and `DB_PASSWORD` at the MySQL service with reference
+   variables. Don't use `MYSQL_URL`, which is in `mysql://` form.
+4. **Other variables.** Set `SPRING_PROFILES_ACTIVE=prod`, `JWT_SECRET`
+   (at least 32 bytes), `DEMO_ACCOUNT_EMAIL`, and `WEBSITE_URL` (the
+   generated public domain). The app won't start until both Stripe
+   variables are set as well.
+5. **Stripe webhook.** In Stripe **test mode**, add an endpoint
    `https://<your-domain>/checkout/webhook` for `payment_intent.succeeded`
-   and `payment_intent.payment_failed`. Its signing secret is
-   `STRIPE_WEBHOOK_SECRET_KEY`.
-6. **Demo account.** Register the demo customer through `POST /users`,
-   which hashes the password and assigns `USER`, using the email
-   configured in `DEMO_ACCOUNT_EMAIL` and the password published in
-   [Try the Demo](#try-the-demo).
+   and `payment_intent.payment_failed`, with API version
+   `2026-07-29.dahlia`. Set its signing secret as
+   `STRIPE_WEBHOOK_SECRET_KEY`, and the test secret key as
+   `STRIPE_SECRET_KEY`.
+6. **Demo account.** After the app is healthy, register the demo customer
+   through `POST /users` with the email in `DEMO_ACCOUNT_EMAIL`.
 
 **Flyway note (V5):** the seed migration `V5__populate_database.sql` was
 changed during development, when the catalogue grew to 58 products. A
-**fresh** database migrates normally. A database that already applied an
+**fresh** database migrates normally, and the live deployment uses one. A database that already applied an
 earlier version of V5 fails Flyway's checksum validation at startup. That
 case needs a deliberate decision, such as starting from a new database, and
 not a blind `flyway repair`, which would only accept the new checksum
@@ -799,7 +839,7 @@ store-api/
 ├── design-reference/                 # approved storefront design reference
 ├── DESIGN.md                         # storefront design system
 ├── PRODUCT.md                        # product brief and "truth rules"
-├── railway.json                      # Railway build/deploy configuration
+├── railway.json                      # Railway config-as-code (not applied by the live service; see Railway Deployment)
 ├── .env.example                      # environment variable template
 └── pom.xml
 ```
