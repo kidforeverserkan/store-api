@@ -1,3 +1,6 @@
+server:
+  port: ${PORT:8080}
+
 spring:
   application:
     name: store
@@ -6,7 +9,28 @@ spring:
     secret: ${JWT_SECRET}
     access-token-expiration: 7200
     refresh-token-expiration: 604800
+    secure-cookie: true
 
 stripe:
   secretKey: ${STRIPE_SECRET_KEY}
   webhookSecretKey: ${STRIPE_WEBHOOK_SECRET_KEY}
+
+# Product prices are stored in DKK. EUR prices are derived with this FIXED
+# demo rate (portfolio project, not a live exchange-rate feed). Change it
+# here, or override with the STORE_CURRENCY_DKKTOEURRATE env var.
+store:
+  currency:
+    dkk-to-eur-rate: 0.1340
+  # The shared public demo login. Visitors can't change, re-password or
+  # delete this account (admins still can). Empty = no account protected.
+  demo:
+    account-email: ${DEMO_ACCOUNT_EMAIL:}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: never

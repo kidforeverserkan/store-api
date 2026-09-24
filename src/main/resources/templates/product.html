@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="dark">
+    <meta name="theme-color" content="#060a14">
+    <title>Product — Store API</title>
+
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%23060a14'/%3E%3Cg fill='none' stroke='%233d86ff' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4.8 8.2h14.4l-1.05 10.6a2.2 2.2 0 0 1-2.19 1.98H8.04a2.2 2.2 0 0 1-2.19-1.98L4.8 8.2Z'/%3E%3Cpath d='M8.8 8.2V6.9a3.2 3.2 0 0 1 6.4 0v1.3'/%3E%3Cpath d='m10.1 11.9-2 2.1 2 2.1M13.9 11.9l2 2.1-2 2.1'/%3E%3C/g%3E%3C/svg%3E">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body th:data-product-id="${productId}">
+<a class="skip-link" href="#main">Skip to content</a>
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<main id="main">
+    <section class="page-head page-head--compact">
+        <div class="container">
+            <nav class="breadcrumb" aria-label="Breadcrumb">
+                <ol>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/shop">Shop</a></li>
+                    <li hidden><a id="crumb-category" href="/shop"></a></li>
+                    <li><span id="crumb-name" aria-current="page">Product</span></li>
+                </ol>
+            </nav>
+        </div>
+    </section>
+
+    <section class="section section--tight">
+        <div class="container">
+            <p id="product-status" class="status-message">Loading product…</p>
+
+            <div id="product-detail" class="product-layout" hidden>
+                <div class="product-gallery">
+                    <div id="product-visual" class="product-stage"></div>
+                </div>
+
+                <div class="product-info">
+                    <a id="product-category" class="category-badge" href="/shop" hidden>
+                        <span data-icon aria-hidden="true"></span><span data-name></span>
+                    </a>
+                    <h1 id="product-name" class="product-info__title"></h1>
+                    <p id="product-desc" class="product-info__desc"></p>
+                    <p id="product-price" class="product-info__price" aria-live="polite"></p>
+                    <p id="product-unit-price" class="product-info__unit" hidden></p>
+                    <p id="product-currency-note" class="product-info__note"></p>
+
+                    <div class="purchase">
+                        <div class="qty-stepper" role="group" aria-label="Quantity">
+                            <button type="button" class="qty-stepper__btn" data-qty-step="-1" aria-label="Decrease quantity">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 12h12"/></svg>
+                            </button>
+                            <input id="product-qty" class="qty-stepper__input" type="number" inputmode="numeric" min="1" max="10" value="1" aria-label="Quantity">
+                            <button type="button" class="qty-stepper__btn" data-qty-step="1" aria-label="Increase quantity">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 12h12M12 6v12"/></svg>
+                            </button>
+                        </div>
+                        <button id="add-to-cart" class="btn btn--primary btn--lg btn--cart" type="button">
+                            <svg class="btn__icon btn__icon--idle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h2l2.2 10.2a1.5 1.5 0 0 0 1.5 1.2h8.6a1.5 1.5 0 0 0 1.5-1.1L21 8H6.2"/><circle cx="9.5" cy="19.5" r="1.2"/><circle cx="17" cy="19.5" r="1.2"/></svg>
+                            <svg class="btn__icon btn__icon--done" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17.5 19 7"/></svg>
+                            <span class="btn__label">Add to cart</span>
+                        </button>
+                    </div>
+                    <p id="add-to-cart-status" class="purchase__status" aria-live="polite"></p>
+
+                    <div class="product-tabs">
+                        <div class="product-tabs__list" role="tablist" aria-label="Product information">
+                            <button id="tab-description" role="tab" type="button" aria-selected="true" aria-controls="panel-description">Description</button>
+                            <button id="tab-details" role="tab" type="button" aria-selected="false" aria-controls="panel-details" tabindex="-1">Details</button>
+                            <button id="tab-payment" role="tab" type="button" aria-selected="false" aria-controls="panel-payment" tabindex="-1">Payment</button>
+                        </div>
+                        <div id="panel-description" class="product-tabs__panel" role="tabpanel" aria-labelledby="tab-description" tabindex="0">
+                            <p id="product-long-desc"></p>
+                        </div>
+                        <div id="panel-details" class="product-tabs__panel" role="tabpanel" aria-labelledby="tab-details" tabindex="0" hidden>
+                            <dl id="product-details" class="details-list"></dl>
+                        </div>
+                        <div id="panel-payment" class="product-tabs__panel" role="tabpanel" aria-labelledby="tab-payment" tabindex="0" hidden>
+                            <ul class="check-list">
+                                <li>Checkout runs on Stripe's hosted payment page.</li>
+                                <li>Pay in Danish kroner or euros — the currency you pick in the header is the one you're charged in.</li>
+                                <li>Log in to check out; every order is saved to your order history with its payment status.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <aside class="product-aside" aria-label="Shopping with Store API">
+                    <ul class="assurance-list">
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 5 6v5.5c0 4.2 2.9 7.9 7 9.5 4.1-1.6 7-5.3 7-9.5V6l-7-3Z"/><path d="m9 12 2.2 2.2L15.5 10"/></svg>
+                            <span><strong>Secure payments</strong>Powered by Stripe Checkout</span>
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M8.5 12h7M12 8.5v7"/></svg>
+                            <span><strong>DKK or EUR</strong>Choose in the header</span>
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 4h11v16H8zM5 7v14h11"/><path d="M11 9h5M11 13h5"/></svg>
+                            <span><strong>Order history</strong>Every order in your account</span>
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h4l2.5-6 5 12 2.5-6H21"/></svg>
+                            <span><strong>Live service status</strong>Shown in the header</span>
+                        </li>
+                    </ul>
+                </aside>
+            </div>
+        </div>
+    </section>
+
+    <section id="related" class="section section--tight" aria-labelledby="related-title" hidden>
+        <div class="container">
+            <div class="section-head">
+                <h2 id="related-title" class="section-title section-title--sm">You might also like</h2>
+            </div>
+            <ol id="related-grid" class="product-grid product-grid--related"></ol>
+        </div>
+    </section>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script type="module" src="/js/product.js"></script>
+</body>
+</html>

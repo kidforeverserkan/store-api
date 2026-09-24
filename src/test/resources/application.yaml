@@ -1,0 +1,36 @@
+# Test-only configuration. Overrides src/main/resources/application.yaml on
+# the test classpath so `mvn test` is self-contained and never needs a real
+# MySQL instance, Stripe account, or .env file (important for CI and for
+# Railway's build step, which runs `mvn package` -> tests by default).
+spring:
+  datasource:
+    url: jdbc:h2:mem:store_test;MODE=MySQL;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+
+  flyway:
+    enabled: false
+
+  jwt:
+    secret: test-only-secret-key-not-used-outside-automated-tests-0123456789
+    access-token-expiration: 7200
+    refresh-token-expiration: 604800
+    secure-cookie: false
+
+stripe:
+  secretKey: sk_test_dummy_key_for_tests
+  webhookSecretKey: whsec_dummy_key_for_tests
+
+websiteUrl: http://localhost:4242
+
+store:
+  currency:
+    dkk-to-eur-rate: 0.1340
+  demo:
+    account-email: demo@storeapi-demo.com

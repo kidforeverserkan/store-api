@@ -28,7 +28,7 @@ public class CartService {
     public CartItemDto addToCart(UUID cartId, Long productId) {
 
         var cart = cartRepository
-                .getCartWhiteItems(cartId)
+                .getCartWithItems(cartId)
                 .orElseThrow(CartNotFoundException::new);
 
         var product = productRepository
@@ -45,7 +45,7 @@ public class CartService {
     public CartDto getCart(UUID cartId) {
 
         var cart = cartRepository
-                .getCartWhiteItems(cartId)
+                .getCartWithItems(cartId)
                 .orElseThrow(CartNotFoundException::new);
 
         return cartMapper.toCartDto(cart);
@@ -58,7 +58,7 @@ public class CartService {
     ) {
 
         var cart = cartRepository
-                .getCartWhiteItems(cartId)
+                .getCartWithItems(cartId)
                 .orElseThrow(CartNotFoundException::new);
 
         var cartItem = cart.getItem(productId);
@@ -80,7 +80,7 @@ public class CartService {
     ) {
 
         var cart = cartRepository
-                .getCartWhiteItems(cartId)
+                .getCartWithItems(cartId)
                 .orElseThrow(CartNotFoundException::new);
 
         cart.removeItemFromCart(productId);
@@ -91,7 +91,7 @@ public class CartService {
     public void clearCart(UUID cartId) {
 
         var cart = cartRepository
-                .getCartWhiteItems(cartId)
+                .getCartWithItems(cartId)
                 .orElseThrow(CartNotFoundException::new);
 
         cart.clear();

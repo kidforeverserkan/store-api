@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="dark">
+    <meta name="theme-color" content="#060a14">
+    <title>About — Store API</title>
+    <meta name="description" content="Store API is a portfolio e-commerce application: a Spring Boot REST API with a storefront built on top of it.">
+
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%23060a14'/%3E%3Cg fill='none' stroke='%233d86ff' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4.8 8.2h14.4l-1.05 10.6a2.2 2.2 0 0 1-2.19 1.98H8.04a2.2 2.2 0 0 1-2.19-1.98L4.8 8.2Z'/%3E%3Cpath d='M8.8 8.2V6.9a3.2 3.2 0 0 1 6.4 0v1.3'/%3E%3Cpath d='m10.1 11.9-2 2.1 2 2.1M13.9 11.9l2 2.1-2 2.1'/%3E%3C/g%3E%3C/svg%3E">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<main id="main">
+    <section class="page-head">
+        <div class="container">
+            <nav class="breadcrumb" aria-label="Breadcrumb">
+                <ol>
+                    <li><a href="/">Home</a></li>
+                    <li><span aria-current="page">About</span></li>
+                </ol>
+            </nav>
+            <h1 class="page-title">About Store API</h1>
+            <p class="page-lede">Store API is a portfolio e-commerce application by Serkan: a production-style Spring Boot REST API, and this storefront built on top of that same public API.</p>
+        </div>
+    </section>
+
+    <section class="section section--tight">
+        <div class="container prose-grid">
+            <div class="prose">
+                <h2>What it is</h2>
+                <p>Everything you see in the shop — products, prices, your cart, checkout and order history — comes from the REST API. The storefront has no private shortcuts: it calls the same endpoints any other client would, documented in the <a href="/swagger-ui/index.html">API reference</a>.</p>
+                <p>It's a learning and portfolio project, built to show how a real online store fits together end to end, not a registered business.</p>
+
+                <h2>What's under the hood</h2>
+                <ul class="check-list">
+                    <li>JWT authentication with access/refresh tokens and customer/admin roles.</li>
+                    <li>A product catalog with admin-only management and public browsing.</li>
+                    <li>Guest carts that convert into Stripe Checkout sessions, with webhooks updating each order's payment status.</li>
+                    <li>DKK and EUR pricing; every order keeps the currency it was charged in.</li>
+                    <li>MySQL with Flyway-versioned migrations, and a live health endpoint behind the header's status indicator.</li>
+                </ul>
+            </div>
+
+            <aside class="panel">
+                <h2 class="panel__title">Tech stack</h2>
+                <ul class="stack-list">
+                    <li>Java 21</li>
+                    <li>Spring Boot 3</li>
+                    <li>Spring Security</li>
+                    <li>Spring Data JPA</li>
+                    <li>MySQL</li>
+                    <li>Flyway</li>
+                    <li>Stripe</li>
+                    <li>JWT</li>
+                    <li>MapStruct</li>
+                    <li>Thymeleaf</li>
+                    <li>OpenAPI / Swagger</li>
+                </ul>
+                <div class="panel__actions">
+                    <a class="btn btn--primary" href="/swagger-ui/index.html">Explore the API</a>
+                    <a class="btn btn--outline" href="https://github.com/kidforeverserkan/store-api">View the source</a>
+                </div>
+            </aside>
+        </div>
+    </section>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

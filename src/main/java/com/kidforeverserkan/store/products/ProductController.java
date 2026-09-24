@@ -1,4 +1,5 @@
 package com.kidforeverserkan.store.products;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -38,7 +39,7 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<ProductDto> createProduct(@RequestBody ProductDto productDto,
+    public ResponseEntity<ProductDto> createProduct(@Valid @RequestBody ProductDto productDto,
                                                     UriComponentsBuilder uriBuilder) {
 
         var category = categoryRepository.findById(productDto.getCategoryId()).orElse(null);
@@ -58,7 +59,7 @@ public class ProductController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ProductDto> updateProduct(
-            @PathVariable Long id, @RequestBody ProductDto productDto) {
+            @PathVariable Long id, @Valid @RequestBody ProductDto productDto) {
         var category = categoryRepository.findById(productDto.getCategoryId()).orElse(null);
         if (category == null) {
             return ResponseEntity.badRequest().build();
@@ -67,7 +68,7 @@ public class ProductController {
 
 
         var product = productRepository.findById(id).orElse(null);
-        if(productDto==null) {
+        if(product==null) {
             return ResponseEntity.notFound().build();
         }
 

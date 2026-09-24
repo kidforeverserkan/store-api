@@ -13,5 +13,7 @@ public class OrderDto {
     private LocalDateTime createdAt;
     private List<OrderItemDto> items;
     private BigDecimal totalPrice;
+    // Currency the order was charged in; totalPrice and item prices are in it.
+    private String currency;
 
 }

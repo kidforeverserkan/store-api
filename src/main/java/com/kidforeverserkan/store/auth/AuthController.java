@@ -1,8 +1,7 @@
 package com.kidforeverserkan.store.auth;
 
 import com.kidforeverserkan.store.config.JwtConfig;
-import com.kidforeverserkan.store.users.UserDto;
-import com.kidforeverserkan.store.users.UserMapper;
+import com.kidforeverserkan.store.users.DemoAccountProperties;
 import com.kidforeverserkan.store.users.UserRepository;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -24,8 +23,8 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
     private final UserRepository userRepository;
-    private final UserMapper userMapper;
     private final JwtConfig jwtConfig;
+    private final DemoAccountProperties demoAccount;
 
 
     @PostMapping("/login")
@@ -46,7 +45,7 @@ public class AuthController {
         cookie.setPath("/auth");
         cookie.setMaxAge(jwtConfig.getRefreshTokenExpiration());
         cookie.setHttpOnly(true);
-        cookie.setSecure(true);
+        cookie.setSecure(jwtConfig.isSecureCookie());
         response.addCookie(cookie);
 
        return ResponseEntity.ok(new JwtResponse(accessToken.toString()));
@@ -54,21 +53,29 @@ public class AuthController {
 
     @PostMapping("/refresh")
     public ResponseEntity<JwtResponse> refresh(
-        @CookieValue(value = "refreshToken") String refreshtoken
+        @CookieValue(value = "refreshToken", required = false) String refreshtoken
     ){
+        if (refreshtoken == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
         var jwt = jwtService.parseToken(refreshtoken);
         if (jwt == null || jwt.isExpired()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        var user = userRepository.findById(jwt.getUserId()).orElseThrow();
+        var user = userRepository.findById(jwt.getUserId()).orElse(null);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
         var accessToken = jwtService.generateAccessToken(user);
 
         return  ResponseEntity.ok(new JwtResponse(accessToken.toString()));
     }
 
     @GetMapping("/me")
-    public ResponseEntity<UserDto> me(){
+    public ResponseEntity<CurrentUserDto> me(){
         var authentication = SecurityContextHolder.getContext().getAuthentication();
         var userId = (Long)authentication.getPrincipal();
 
@@ -77,9 +84,12 @@ public class AuthController {
             return ResponseEntity.notFound().build();
         }
 
-        var userDto = userMapper.toDto(user);
-
-        return ResponseEntity.ok(userDto);
+        return ResponseEntity.ok(new CurrentUserDto(
+                user.getId(),
+                user.getName(),
+                user.getEmail(),
+                demoAccount.isDemoAccount(user)
+        ));
     }
 
     @ExceptionHandler(BadCredentialsException.class)

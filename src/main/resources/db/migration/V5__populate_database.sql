@@ -1,3 +1,4 @@
+-- Seed categories
 INSERT INTO categories (name)
 VALUES
     ('Electronics'),
@@ -6,65 +7,68 @@ VALUES
     ('Fitness'),
     ('Office');
 
+-- Seed products
 INSERT INTO products (name, price, description, category_id)
 VALUES
-    (
-        'Wireless Mechanical Keyboard',
-        89.99,
-        'Compact mechanical keyboard with wireless connectivity.',
-        1
-    ),
-    (
-        'Noise Cancelling Headphones',
-        149.99,
-        'Over-ear headphones designed to reduce background noise.',
-        1
-    ),
-    (
-        'Stainless Steel Water Bottle',
-        24.95,
-        'Insulated reusable water bottle for hot and cold drinks.',
-        2
-    ),
-    (
-        'LED Desk Lamp',
-        39.99,
-        'Adjustable desk lamp with multiple brightness settings.',
-        2
-    ),
-    (
-        'Clean Code Handbook',
-        34.50,
-        'A practical book about writing readable and maintainable software.',
-        3
-    ),
-    (
-        'Java Development Guide',
-        42.00,
-        'A guide covering modern Java development concepts and practices.',
-        3
-    ),
-    (
-        'Resistance Band Set',
-        29.99,
-        'A set of resistance bands suitable for home workouts.',
-        4
-    ),
-    (
-        'Adjustable Dumbbell',
-        119.99,
-        'A space-saving adjustable dumbbell for strength training.',
-        4
-    ),
-    (
-        'Ergonomic Laptop Stand',
-        49.99,
-        'An adjustable aluminum stand designed to improve laptop ergonomics.',
-        5
-    ),
-    (
-        'Wireless Mouse',
-        27.99,
-        'A comfortable wireless mouse suitable for everyday productivity.',
-        5
-    );
+    ('Wireless Gaming Mouse', 59.99, 'Ergonomic wireless gaming mouse with adjustable DPI and programmable buttons.', 1),
+    ('USB-C Hub 7-in-1', 39.99, 'Seven-port USB-C hub with HDMI, USB-A, SD card, and high-speed data connectivity.', 1),
+    ('27-inch QHD Monitor', 279.99, '27-inch QHD IPS monitor with sharp resolution and wide viewing angles.', 1),
+    ('24-inch Full HD Monitor', 159.99, '24-inch Full HD monitor designed for everyday work, study, and entertainment.', 1),
+    ('USB-C Docking Station', 129.99, 'Multi-port USB-C docking station for connecting displays, storage, networking, and peripherals.', 1),
+    ('1080p Full HD Webcam', 49.99, 'Full HD webcam with built-in microphone for video calls, meetings, and streaming.', 1),
+    ('USB Condenser Microphone', 89.99, 'USB condenser microphone designed for podcasts, streaming, meetings, and voice recording.', 1),
+    ('Wireless Bluetooth Speaker', 69.99, 'Portable Bluetooth speaker with rechargeable battery and room-filling sound.', 1),
+    ('Wireless Earbuds', 79.99, 'Compact wireless earbuds with charging case and touch controls.', 1),
+    ('Noise Cancelling Headset', 119.99, 'Over-ear wireless headset with active noise cancellation and integrated microphone.', 1),
+    ('Portable Power Bank 20000mAh', 44.99, 'High-capacity portable power bank with USB-C fast charging support.', 1),
+    ('65W USB-C Laptop Charger', 39.99, 'Compact 65W USB-C charger suitable for laptops, tablets, and compatible phones.', 1),
+    ('Portable SSD 1TB', 109.99, 'Compact 1TB external SSD for fast portable file storage and backups.', 1),
+    ('Portable SSD 2TB', 189.99, 'High-capacity 2TB external SSD designed for fast file transfers and backups.', 1),
+    ('External Hard Drive 2TB', 74.99, 'Portable 2TB external hard drive for affordable everyday storage and backups.', 1),
+    ('Wi-Fi 6 Router', 129.99, 'Dual-band Wi-Fi 6 router designed for fast and reliable home networking.', 1),
+    ('USB 3.0 Flash Drive 128GB', 19.99, 'Compact 128GB USB flash drive for convenient file storage and transfer.', 1),
+    ('Mechanical Keyboard', 94.99, 'Full-size mechanical keyboard with tactile switches and durable keycaps.', 1),
+    ('Wireless Keyboard and Mouse Set', 54.99, 'Wireless keyboard and mouse combination designed for comfortable everyday computing.', 1),
+    ('4K HDMI Cable', 14.99, 'High-speed HDMI cable supporting 4K video and modern home entertainment devices.', 1),
+
+    ('Electric Kettle', 39.99, 'Stainless steel electric kettle with rapid boiling and automatic shut-off.', 2),
+    ('Programmable Coffee Maker', 79.99, 'Programmable coffee maker with timer controls and reusable filter.', 2),
+    ('Compact Air Fryer', 89.99, 'Compact air fryer with adjustable temperature and timer controls.', 2),
+    ('Personal Blender', 49.99, 'Compact countertop blender suitable for smoothies, shakes, and everyday drinks.', 2),
+    ('Digital Kitchen Scale', 24.99, 'Digital kitchen scale with precise measurements and an easy-to-read display.', 2),
+    ('Smart LED Light Bulb', 17.99, 'Wi-Fi enabled smart LED bulb with adjustable brightness and color temperature.', 2),
+    ('Smart Plug 2-Pack', 24.99, 'Two-pack of Wi-Fi smart plugs for remotely controlling compatible household devices.', 2),
+    ('Robot Vacuum Cleaner', 249.99, 'Smart robot vacuum designed for automated floor cleaning and scheduled operation.', 2),
+    ('Electric Milk Frother', 29.99, 'Electric milk frother for preparing hot and cold foam for coffee drinks.', 2),
+    ('Countertop Toaster', 34.99, 'Compact two-slice toaster with adjustable browning controls.', 2),
+
+    ('Clean Code: A Handbook of Agile Software Craftsmanship', 42.99, 'Practical software development book focused on readable, maintainable, and professional code.', 3),
+    ('Effective Java', 49.99, 'Advanced Java programming guide covering best practices, design patterns, and modern techniques.', 3),
+    ('Spring in Action', 54.99, 'Practical guide to building modern applications with the Spring Framework.', 3),
+    ('Learning SQL', 39.99, 'Practical introduction to SQL queries, relational databases, and data manipulation.', 3),
+    ('Head First Design Patterns', 44.99, 'Accessible introduction to reusable object-oriented software design patterns.', 3),
+    ('Data Structures and Algorithms in Java', 52.99, 'Comprehensive guide to implementing and understanding data structures and algorithms in Java.', 3),
+    ('C++ Primer', 59.99, 'Comprehensive introduction to modern C++ programming and the C++ standard library.', 3),
+    ('The Pragmatic Programmer', 49.99, 'Software engineering guide covering practical techniques for building better software.', 3),
+    ('Designing Data-Intensive Applications', 54.99, 'Technical guide to scalable data systems, storage, distributed systems, and architecture.', 3),
+    ('Web Development with HTML and CSS', 34.99, 'Practical introduction to building structured and responsive websites with HTML and CSS.', 3),
+
+    ('Smart Fitness Tracker', 79.99, 'Fitness tracker with activity monitoring, step tracking, and heart-rate measurement.', 4),
+    ('Digital Bathroom Scale', 34.99, 'Digital bathroom scale with a clear display and accurate weight measurement.', 4),
+    ('Resistance Band Set', 29.99, 'Set of resistance bands with multiple resistance levels for strength and mobility training.', 4),
+    ('Adjustable Dumbbell Set', 149.99, 'Adjustable dumbbell set designed for flexible home strength training.', 4),
+    ('Yoga Mat', 29.99, 'Non-slip exercise mat suitable for yoga, stretching, mobility, and floor workouts.', 4),
+    ('Massage Gun', 89.99, 'Portable percussion massage device with multiple intensity settings and interchangeable heads.', 4),
+    ('Stainless Steel Sports Bottle', 24.99, 'Insulated stainless steel bottle designed to keep drinks cold during workouts and daily activities.', 4),
+    ('Smart Jump Rope', 39.99, 'Digital jump rope with workout tracking and adjustable length.', 4),
+
+    ('Adjustable Monitor Stand', 49.99, 'Adjustable monitor stand designed to improve desk ergonomics and workspace organization.', 5),
+    ('Ergonomic Laptop Stand', 44.99, 'Adjustable laptop stand that raises the screen for a more comfortable working position.', 5),
+    ('LED Desk Lamp', 39.99, 'Adjustable LED desk lamp with multiple brightness levels for focused workspace lighting.', 5),
+    ('Monitor Arm', 69.99, 'Adjustable monitor arm with tilt, swivel, and height adjustment for flexible desk setups.', 5),
+    ('Large Desk Mat', 24.99, 'Large desk mat providing a smooth surface for keyboards, mice, and everyday office work.', 5),
+    ('Wireless Presentation Remote', 29.99, 'Wireless presentation remote with slide controls and laser pointer functionality.', 5),
+    ('Desktop Organizer', 19.99, 'Multi-compartment desktop organizer for pens, cables, stationery, and small accessories.', 5),
+    ('USB Desk Fan', 22.99, 'Compact USB-powered desk fan with adjustable airflow and quiet operation.', 5),
+    ('Document Scanner', 129.99, 'Compact document scanner designed for quickly digitizing receipts, documents, and notes.', 5),
+    ('Wireless Label Printer', 69.99, 'Compact wireless label printer for organizing files, storage boxes, cables, and office supplies.', 5);

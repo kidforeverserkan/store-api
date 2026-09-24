@@ -1,0 +1,11 @@
+{
+  "name": "store-api-e2e",
+  "private": true,
+  "description": "Browser tests for the Store API storefront (run against a locally running app).",
+  "scripts": {
+    "test": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.63.0"
+  }
+}

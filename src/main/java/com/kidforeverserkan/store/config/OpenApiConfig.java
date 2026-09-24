@@ -18,7 +18,7 @@ public class OpenApiConfig {
         return new OpenAPI()
                 .info(
                         new Info()
-                                .title("Shopping Cart API")
+                                .title("Store API")
                                 .version("1.0.0")
                                 .description(
                                         "A RESTful API built with Spring Boot for managing " +

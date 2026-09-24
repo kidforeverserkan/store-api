@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="dark">
+    <meta name="theme-color" content="#060a14">
+    <title>Shop — Store API</title>
+    <meta name="description" content="Browse the product catalog.">
+
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%23060a14'/%3E%3Cg fill='none' stroke='%233d86ff' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4.8 8.2h14.4l-1.05 10.6a2.2 2.2 0 0 1-2.19 1.98H8.04a2.2 2.2 0 0 1-2.19-1.98L4.8 8.2Z'/%3E%3Cpath d='M8.8 8.2V6.9a3.2 3.2 0 0 1 6.4 0v1.3'/%3E%3Cpath d='m10.1 11.9-2 2.1 2 2.1M13.9 11.9l2 2.1-2 2.1'/%3E%3C/g%3E%3C/svg%3E">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<main id="main">
+    <section class="page-head">
+        <div class="container">
+            <nav class="breadcrumb" aria-label="Breadcrumb">
+                <ol>
+                    <li><a href="/">Home</a></li>
+                    <li><span aria-current="page">Shop</span></li>
+                </ol>
+            </nav>
+            <h1 class="page-title">Shop</h1>
+            <p class="page-lede">Everything in the catalog — search from the header, or narrow it down by category.</p>
+        </div>
+    </section>
+
+    <section class="section section--tight">
+        <div class="container">
+            <div class="shop-toolbar">
+                <div id="category-filter" class="category-filter" role="group" aria-label="Filter by category" hidden></div>
+                <p id="shop-results" class="shop-results" role="status"></p>
+            </div>
+            <p id="shop-status" class="status-message">Loading products…</p>
+            <ol id="product-grid" class="product-grid"></ol>
+            <div id="shop-empty" class="empty-state" hidden>
+                <p id="shop-empty-text"></p>
+                <button id="shop-clear" class="btn btn--outline" type="button">Clear search and filters</button>
+            </div>
+        </div>
+    </section>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script type="module" src="/js/shop.js"></script>
+</body>
+</html>

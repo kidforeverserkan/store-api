@@ -1,6 +1,7 @@
 package com.kidforeverserkan.store.users;
 
 import com.kidforeverserkan.store.auth.AuthService;
+import com.kidforeverserkan.store.exceptions.ErrorDto;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Sort;
@@ -23,6 +24,7 @@ public class UserController {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final AuthService authService;
+    private final DemoAccountProperties demoAccount;
 
     @GetMapping
     public Iterable<UserDto> getAllUsers(
@@ -101,6 +103,8 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
 
+        rejectDemoAccountChanges(user);
+
         userMapper.update(request, user);
         userRepository.save(user);
 
@@ -117,6 +121,8 @@ public class UserController {
         if (user == null) {
             return ResponseEntity.notFound().build();
         }
+
+        rejectDemoAccountChanges(user);
 
         userRepository.delete(user);
 
@@ -135,6 +141,8 @@ public class UserController {
         if (user == null) {
             return ResponseEntity.notFound().build();
         }
+
+        rejectDemoAccountChanges(user);
 
         if (!passwordEncoder.matches(
                 request.getOldPassword(),
@@ -176,5 +184,23 @@ public class UserController {
                     "You don't have access to this user."
             );
         }
+    }
+
+    // The public demo account's login is shared with every visitor, so only
+    // an admin may change or delete it; everyone else gets a 403.
+    private void rejectDemoAccountChanges(User user) {
+        if (demoAccount.isDemoAccount(user)
+                && !isAdmin(authService.getCurrentUser())) {
+            throw new DemoAccountModificationException();
+        }
+    }
+
+    @ExceptionHandler(DemoAccountModificationException.class)
+    public ResponseEntity<ErrorDto> handleDemoAccountModification(
+            DemoAccountModificationException ex
+    ) {
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(new ErrorDto(ex.getMessage()));
     }
 }

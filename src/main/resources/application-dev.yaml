@@ -7,4 +7,11 @@ spring:
   jpa:
     show-sql: true
 
-websiteUrl: http://localhost:4242
+  # The app runs over plain HTTP locally, so the refresh-token cookie can't
+  # have the Secure flag here or browsers will silently drop it (Secure
+  # cookies require HTTPS, which prod/Railway provides via the
+  # forwarded-headers proxy).
+  jwt:
+    secure-cookie: false
+
+websiteUrl: http://localhost:8080

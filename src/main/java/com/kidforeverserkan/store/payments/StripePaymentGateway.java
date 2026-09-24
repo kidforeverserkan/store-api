@@ -1,5 +1,7 @@
 package com.kidforeverserkan.store.payments;
 
+import com.kidforeverserkan.store.currency.CurrencyService;
+import com.kidforeverserkan.store.currency.SupportedCurrency;
 import com.kidforeverserkan.store.orders.Order;
 import com.kidforeverserkan.store.orders.OrderItem;
 import com.stripe.exception.SignatureVerificationException;
@@ -9,14 +11,17 @@ import com.stripe.model.PaymentIntent;
 import com.stripe.model.checkout.Session;
 import com.stripe.net.Webhook;
 import com.stripe.param.checkout.SessionCreateParams;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.Optional;
 
 @Service
 public class StripePaymentGateway implements PaymentGateway {
+
+    private static final Logger log = LoggerFactory.getLogger(StripePaymentGateway.class);
 
     @Value("${websiteUrl}")
     private String websiteUrl;
@@ -24,38 +29,22 @@ public class StripePaymentGateway implements PaymentGateway {
     @Value("${stripe.webhookSecretKey}")
     private String webhookSecretKey;
 
+    private final CurrencyService currencyService;
+
+    public StripePaymentGateway(CurrencyService currencyService) {
+        this.currencyService = currencyService;
+    }
+
     @Override
     public CheckoutSession createCheckoutSession(Order order) {
 
         try {
-            var builder = SessionCreateParams.builder()
-                    .setMode(SessionCreateParams.Mode.PAYMENT)
-                    .setSuccessUrl(
-                            websiteUrl + "/checkout-success?orderId=" + order.getId()
-                    )
-                    .setCancelUrl(
-                            websiteUrl + "/checkout-cancel"
-                    )
-                    .setPaymentIntentData(
-                            SessionCreateParams.PaymentIntentData.builder()
-                                    .putMetadata(
-                                            "order_id",
-                                            order.getId().toString()
-                                    )
-                                    .build()
-                    );
-
-            order.getItems().forEach(item -> {
-                var lineItem = createLineItem(item);
-                builder.addLineItem(lineItem);
-            });
-
-            var session = Session.create(builder.build());
+            var session = Session.create(buildSessionParams(order));
 
             return new CheckoutSession(session.getUrl());
 
         } catch (StripeException ex) {
-            System.out.println(ex.getMessage());
+            log.error("Stripe checkout session creation failed: {}", ex.getMessage());
             throw new PaymentException();
         }
     }
@@ -66,6 +55,9 @@ public class StripePaymentGateway implements PaymentGateway {
         try {
             var payload = request.getPayload();
             var signature = request.getHeaders().get("stripe-signature");
+            if (signature == null) {
+                throw new WebhookVerificationException("Missing Stripe signature");
+            }
 
             var event = Webhook.constructEvent(
                     payload,
@@ -96,7 +88,7 @@ public class StripePaymentGateway implements PaymentGateway {
             };
 
         } catch (SignatureVerificationException e) {
-            throw new PaymentException("invalid Signature");
+            throw new WebhookVerificationException("Invalid Stripe signature");
         }
     }
 
@@ -121,22 +113,52 @@ public class StripePaymentGateway implements PaymentGateway {
         );
     }
 
-    private SessionCreateParams.LineItem createLineItem(OrderItem item) {
+    // Package-private so tests can check exactly what Stripe would receive
+    // (currency + per-unit amounts) without calling Stripe.
+    SessionCreateParams buildSessionParams(Order order) {
+        var currency = order.getCurrency();
+        var builder = SessionCreateParams.builder()
+                .setMode(SessionCreateParams.Mode.PAYMENT)
+                .setSuccessUrl(
+                        websiteUrl + "/checkout-success?orderId=" + order.getId()
+                )
+                .setCancelUrl(
+                        websiteUrl + "/checkout-cancel"
+                )
+                .setPaymentIntentData(
+                        SessionCreateParams.PaymentIntentData.builder()
+                                .putMetadata(
+                                        "order_id",
+                                        order.getId().toString()
+                                )
+                                .putMetadata(
+                                        "currency",
+                                        currency.name()
+                                )
+                                .build()
+                );
+
+        order.getItems().forEach(item -> builder.addLineItem(createLineItem(item, currency)));
+
+        return builder.build();
+    }
+
+    private SessionCreateParams.LineItem createLineItem(OrderItem item, SupportedCurrency currency) {
 
         return SessionCreateParams.LineItem.builder()
                 .setQuantity(Long.valueOf(item.getQuantity()))
-                .setPriceData(createPriceData(item))
+                .setPriceData(createPriceData(item, currency))
                 .build();
     }
 
-    private SessionCreateParams.LineItem.PriceData createPriceData(OrderItem item) {
-
+    // Unit price only: Stripe multiplies by quantity itself, which matches
+    // how the order's line totals were recorded. The unit price is already
+    // in the order's currency (converted once, at checkout, by
+    // Order.fromCart) — it is sent as-is, never converted again.
+    private SessionCreateParams.LineItem.PriceData createPriceData(OrderItem item, SupportedCurrency currency) {
         return SessionCreateParams.LineItem.PriceData.builder()
-                .setCurrency("DKK")
-                .setUnitAmountDecimal(
-                        item.getUnitPrice()
-                                .multiply(BigDecimal.valueOf(100))
-                )
+                .setCurrency(currency.stripeCode())
+                .setUnitAmount(currencyService.toMinorUnits(item.getUnitPrice()))
                 .setProductData(createProductData(item))
                 .build();
     }

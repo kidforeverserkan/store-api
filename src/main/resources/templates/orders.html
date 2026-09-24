@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="dark">
+    <meta name="theme-color" content="#060a14">
+    <title>Account — Store API</title>
+
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%23060a14'/%3E%3Cg fill='none' stroke='%233d86ff' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4.8 8.2h14.4l-1.05 10.6a2.2 2.2 0 0 1-2.19 1.98H8.04a2.2 2.2 0 0 1-2.19-1.98L4.8 8.2Z'/%3E%3Cpath d='M8.8 8.2V6.9a3.2 3.2 0 0 1 6.4 0v1.3'/%3E%3Cpath d='m10.1 11.9-2 2.1 2 2.1M13.9 11.9l2 2.1-2 2.1'/%3E%3C/g%3E%3C/svg%3E">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<main id="main">
+    <section class="page-head">
+        <div class="container">
+            <nav class="breadcrumb" aria-label="Breadcrumb">
+                <ol>
+                    <li><a href="/">Home</a></li>
+                    <li><span aria-current="page">Account</span></li>
+                </ol>
+            </nav>
+            <h1 class="page-title">Account</h1>
+            <p class="page-lede">Your Store API account and order history.</p>
+        </div>
+    </section>
+
+    <section class="section section--tight">
+        <div class="container">
+            <p id="orders-status" class="status-message" role="status">Loading your account…</p>
+
+            <!-- Signed out (or session expired): a real sign-in prompt, not an empty page. -->
+            <div id="account-signed-out" class="account-empty" hidden>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M4.8 20a7.2 7.2 0 0 1 14.4 0"/></svg>
+                <h2 id="account-signed-out-title" class="account-empty__title">Sign in to your account</h2>
+                <p id="account-signed-out-text">Sign in to see your account details and every order you have placed.</p>
+                <div class="account-empty__actions">
+                    <a class="btn btn--primary" href="/login?next=/orders">Sign in</a>
+                    <a class="btn btn--outline" href="/register?next=/orders">Create an account</a>
+                </div>
+            </div>
+
+            <div id="account-dashboard" class="account-layout" hidden>
+                <aside class="account-card" aria-labelledby="account-card-title">
+                    <p class="eyebrow" id="account-card-title">Account overview</p>
+                    <div class="account-card__identity">
+                        <span id="account-avatar" class="account-card__avatar" aria-hidden="true"></span>
+                        <div class="account-card__who">
+                            <span id="account-name" class="account-card__name"></span>
+                            <span id="account-email" class="account-card__email"></span>
+                        </div>
+                    </div>
+                    <!-- Shown only for the shared public demo account (read-only by design). -->
+                    <p id="account-demo-note" class="account-card__demo" hidden>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+                        <span>This shared demo account can't be modified.</span>
+                    </p>
+                    <dl class="account-card__stats">
+                        <div><dt>Orders</dt><dd id="account-order-count">–</dd></div>
+                        <div><dt>Paid</dt><dd id="account-paid-count">–</dd></div>
+                    </dl>
+                    <div class="account-card__actions">
+                        <a id="edit-profile-button" class="btn btn--primary" href="#edit-profile" hidden>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4Z"/><path d="m13.5 6.5 4 4"/></svg>
+                            Edit profile
+                        </a>
+                        <a class="btn btn--outline" href="#order-history">View orders</a>
+                        <a class="btn btn--ghost" href="/shop">Continue shopping</a>
+                        <button class="btn btn--ghost account-card__logout" type="button" data-logout hidden>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3M10 16l-4-4 4-4M6 12h10"/></svg>
+                            Log out
+                        </button>
+                    </div>
+                </aside>
+
+                <section id="order-history" class="account-orders" aria-labelledby="order-history-title">
+                    <div class="section-head">
+                        <h2 id="order-history-title" class="section-title section-title--sm">Order history</h2>
+                        <span id="orders-summary" class="shop-results"></span>
+                    </div>
+                    <ul id="orders-list" class="orders-list" hidden></ul>
+                    <div id="orders-empty" class="account-empty" hidden>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1.2 10.2a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8L5 8Z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/></svg>
+                        <h3 class="account-empty__title">No orders yet</h3>
+                        <p>You haven’t placed an order yet. When you do, it will appear here with its payment status.</p>
+                        <div class="account-empty__actions">
+                            <a class="btn btn--primary" href="/shop">Start shopping</a>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Edit profile (normal accounts only), opened with #edit-profile. -->
+                <section id="account-edit" class="account-edit" aria-labelledby="account-edit-title" hidden>
+                    <div class="section-head">
+                        <h2 id="account-edit-title" class="section-title section-title--sm" tabindex="-1">Edit profile</h2>
+                    </div>
+
+                    <form id="profile-form" class="form account-edit__form" novalidate>
+                        <h3 class="account-edit__heading">Personal information</h3>
+                        <div class="field">
+                            <label for="profile-name">Name</label>
+                            <input id="profile-name" name="name" type="text" autocomplete="name" maxlength="255" required>
+                        </div>
+                        <div class="field">
+                            <label for="profile-email">Email</label>
+                            <input id="profile-email" name="email" type="email" autocomplete="email" maxlength="255" required>
+                        </div>
+                        <p id="profile-message" class="account-edit__message" role="status" aria-live="polite"></p>
+                        <div class="account-edit__actions">
+                            <button class="btn btn--primary" type="submit">Save changes</button>
+                        </div>
+                    </form>
+
+                    <form id="password-form" class="form account-edit__form" novalidate>
+                        <h3 class="account-edit__heading">Security</h3>
+                        <div class="field">
+                            <label for="current-password">Current password</label>
+                            <input id="current-password" name="currentPassword" type="password" autocomplete="current-password" required>
+                        </div>
+                        <div class="field">
+                            <label for="new-password">New password</label>
+                            <input id="new-password" name="newPassword" type="password" autocomplete="new-password" minlength="8" maxlength="25" aria-describedby="new-password-hint" required>
+                            <p id="new-password-hint" class="field-hint">8–25 characters.</p>
+                        </div>
+                        <div class="field">
+                            <label for="confirm-password">Confirm new password</label>
+                            <input id="confirm-password" name="confirmPassword" type="password" autocomplete="new-password" required>
+                        </div>
+                        <p id="password-message" class="account-edit__message" role="status" aria-live="polite"></p>
+                        <div class="account-edit__actions">
+                            <button class="btn btn--primary" type="submit">Change password</button>
+                        </div>
+                    </form>
+
+                    <div class="form account-edit__form account-edit__danger">
+                        <h3 class="account-edit__heading">Delete account</h3>
+                        <p class="account-edit__text">Permanently delete your account. Accounts that have placed orders can't be deleted, so their order history stays intact.</p>
+                        <p id="delete-message" class="account-edit__message" role="status" aria-live="polite"></p>
+                        <div class="account-edit__actions">
+                            <button id="delete-account-button" class="btn btn--outline account-edit__delete" type="button">Delete account</button>
+                        </div>
+                        <div id="delete-confirm" class="account-edit__confirm" hidden>
+                            <p class="account-edit__text"><strong>Delete your account?</strong> This can't be undone.</p>
+                            <div class="account-edit__actions">
+                                <button id="delete-account-confirm" class="btn btn--primary account-edit__delete-confirm" type="button">Yes, delete my account</button>
+                                <button id="delete-account-cancel" class="btn btn--ghost" type="button">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a class="btn btn--ghost account-edit__back" href="#order-history">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
+                        Back to account
+                    </a>
+                </section>
+            </div>
+        </div>
+    </section>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script type="module" src="/js/orders.js"></script>
+</body>
+</html>

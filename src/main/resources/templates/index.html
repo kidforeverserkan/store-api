@@ -1,12 +1,171 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Store API</title>
+    <meta name="color-scheme" content="dark">
+    <meta name="theme-color" content="#060a14">
+    <title>Store API — A Better Everyday</title>
+    <meta name="description" content="Store API: a premium e-commerce storefront built on a Spring Boot REST API — products, cart, Stripe checkout in DKK or EUR.">
+
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%23060a14'/%3E%3Cg fill='none' stroke='%233d86ff' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4.8 8.2h14.4l-1.05 10.6a2.2 2.2 0 0 1-2.19 1.98H8.04a2.2 2.2 0 0 1-2.19-1.98L4.8 8.2Z'/%3E%3Cpath d='M8.8 8.2V6.9a3.2 3.2 0 0 1 6.4 0v1.3'/%3E%3Cpath d='m10.1 11.9-2 2.1 2 2.1M13.9 11.9l2 2.1-2 2.1'/%3E%3C/g%3E%3C/svg%3E">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+
+    <link rel="preload" as="image" href="/images/products/product-10-noise-cancelling-headset-756.webp"
+          imagesrcset="/images/products/product-10-noise-cancelling-headset-400.webp 400w, /images/products/product-10-noise-cancelling-headset-756.webp 756w"
+          imagesizes="(max-width: 900px) 100vw, 60vw" fetchpriority="high">
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-<h1>Welcome to the Store API</h1>
-<p>Spring Boot e-commerce application.</p>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<main id="main">
+    <section class="hero">
+        <!-- Slides for the featured-product reel; the headset is the first
+             slide and the page's LCP image. featured-product-reel.js adds the
+             other photographed products after the catalog loads. -->
+        <div class="hero__media" aria-hidden="true">
+            <img class="hero__img is-active" data-product-id="10"
+                 src="/images/products/product-10-noise-cancelling-headset-756.webp"
+                 srcset="/images/products/product-10-noise-cancelling-headset-400.webp 400w, /images/products/product-10-noise-cancelling-headset-756.webp 756w"
+                 sizes="(max-width: 900px) 100vw, 60vw"
+                 width="756" height="500" alt="" fetchpriority="high" decoding="async">
+        </div>
+
+        <div class="container hero__inner">
+            <div class="hero__copy">
+                <p class="eyebrow">Premium products</p>
+                <h1 class="hero__title">A Better <span>Everyday</span></h1>
+                <p class="hero__lede">Discover quality products for work, home and life — then check out securely with Stripe, in DKK or EUR.</p>
+                <div class="hero__actions">
+                    <a class="btn btn--primary btn--lg" href="/shop">
+                        Shop now
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                    </a>
+                    <a class="btn btn--outline btn--lg" href="#categories">Explore categories</a>
+                </div>
+
+                <ul class="trust-list" aria-label="Why shop here">
+                    <li>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 5 6v5.5c0 4.2 2.9 7.9 7 9.5 4.1-1.6 7-5.3 7-9.5V6l-7-3Z"/><path d="m9 12 2.2 2.2L15.5 10"/></svg>
+                        <span><strong>Secure payments</strong>Powered by Stripe</span>
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M8.5 12h7M12 8.5v7"/></svg>
+                        <span><strong>DKK or EUR</strong>Switch any time</span>
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h4l2.5-6 5 12 2.5-6H21"/></svg>
+                        <span><strong>Live service status</strong>Checked every 30 seconds</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="hero__aside featured-reel" role="region" aria-roledescription="carousel" aria-label="Featured products" hidden>
+                <div class="hero-feature" data-feature-text>
+                    <p class="hero-feature__category"><span data-feature-icon aria-hidden="true"></span><span data-feature-category></span></p>
+                    <p class="hero__tagline" data-feature-name></p>
+                    <p class="hero__tagline-sub" data-feature-desc></p>
+                </div>
+                <div class="hero-feature__bottom">
+                    <a id="hero-product" class="hero-product" href="/shop/10">
+                        <span class="hero-product__label">Featured</span>
+                        <span class="hero-product__name" data-name></span>
+                        <span class="hero-product__price" data-price></span>
+                        <span class="hero-product__cta">View product
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                        </span>
+                    </a>
+                    <div class="featured-reel__controls">
+                        <div class="featured-reel__progress" data-feature-progress aria-hidden="true"></div>
+                        <button class="icon-btn icon-btn--quiet icon-btn--sm is-playing" type="button" data-feature-toggle aria-pressed="false" aria-label="Pause featured products">
+                            <svg class="icon-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="7" y="6" width="3.2" height="12" rx="1"/><rect x="13.8" y="6" width="3.2" height="12" rx="1"/></svg>
+                            <svg class="icon-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.8v12.4a1 1 0 0 0 1.5.9l9.8-6.2a1 1 0 0 0 0-1.7L9.5 4.9a1 1 0 0 0-1.5.9Z"/></svg>
+                        </button>
+                        <button class="icon-btn icon-btn--quiet icon-btn--sm" type="button" data-feature-next aria-label="Next featured product">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                        </button>
+                    </div>
+                    <p class="visually-hidden" data-feature-status aria-live="off"></p>
+                </div>
+            </div>
+        </div>
+
+        <a class="hero__scroll" href="#categories" aria-label="Scroll to categories">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg>
+        </a>
+    </section>
+
+    <section id="categories" class="section section--reel" aria-labelledby="categories-title">
+        <div class="container">
+            <div class="section-head">
+                <div>
+                    <p class="eyebrow">Shop by category</p>
+                    <h2 id="categories-title" class="section-title">Find What Moves You</h2>
+                </div>
+                <div class="reel-controls">
+                    <button class="icon-btn icon-btn--quiet is-playing" type="button" data-reel-toggle aria-pressed="false" aria-label="Pause category animation">
+                        <svg class="icon-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="7" y="6" width="3.2" height="12" rx="1"/><rect x="13.8" y="6" width="3.2" height="12" rx="1"/></svg>
+                        <svg class="icon-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.8v12.4a1 1 0 0 0 1.5.9l9.8-6.2a1 1 0 0 0 0-1.7L9.5 4.9a1 1 0 0 0-1.5.9Z"/></svg>
+                    </button>
+                    <button class="icon-btn" type="button" data-reel-prev aria-label="Previous category">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+                    </button>
+                    <button class="icon-btn" type="button" data-reel-next aria-label="Next category">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="container container--bleed">
+            <div class="category-reel" role="region" aria-roledescription="carousel" aria-label="Product categories">
+                <div class="category-reel__viewport">
+                    <ol id="category-track" class="category-reel__track"></ol>
+                </div>
+                <div id="category-progress" class="category-reel__progress" aria-hidden="true"></div>
+                <p class="visually-hidden" data-reel-status aria-live="off"></p>
+            </div>
+        </div>
+    </section>
+
+    <section id="featured" class="section" aria-labelledby="featured-title">
+        <div class="container">
+            <div class="section-head">
+                <h2 id="featured-title" class="section-title section-title--sm">Featured Products</h2>
+                <a class="text-link" href="/shop">
+                    View all products
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                </a>
+            </div>
+            <ol id="featured-grid" class="product-grid product-grid--featured"></ol>
+        </div>
+    </section>
+
+    <section class="section section--close">
+        <div class="container close-band">
+            <div>
+                <h2 class="section-title section-title--sm">Built on a real REST API</h2>
+                <p>Every product, price, cart and order on this site is served by the Spring Boot API behind it — JWT auth, Stripe checkout with webhooks, DKK/EUR pricing and Flyway-versioned MySQL.</p>
+            </div>
+            <div class="close-band__actions">
+                <a class="btn btn--outline" href="/about">About the project</a>
+                <a class="btn btn--ghost" href="/swagger-ui/index.html">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 8-4 4 4 4M16 8l4 4-4 4"/></svg>
+                    Explore the API
+                </a>
+            </div>
+        </div>
+    </section>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script type="module" src="/js/home.js"></script>
 </body>
 </html>

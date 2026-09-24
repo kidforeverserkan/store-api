@@ -3,7 +3,7 @@ package com.kidforeverserkan.store.auth;
 import com.kidforeverserkan.store.config.JwtConfig;
 import com.kidforeverserkan.store.users.User;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -36,11 +36,17 @@ public class JwtService {
         return new Jwt(claims, jwtConfig.getSecretKey());
     }
 
+    // Treats *any* unparseable, malformed, unsigned, or expired token the
+    // same way: as "not authenticated," not as a server error. Without this,
+    // an expired token was handled fine, but a garbage/tampered token (or an
+    // empty string) threw a raw JwtException/IllegalArgumentException that
+    // propagated uncaught out of JwtAuthenticationFilter on every protected
+    // endpoint, and out of AuthController#refresh for the refresh cookie.
     public Jwt parseToken(String token) {
         try {
             var claims = getClaims(token);
             return  new Jwt(claims, jwtConfig.getSecretKey());
-        } catch (ExpiredJwtException e) {
+        } catch (JwtException | IllegalArgumentException e) {
             return null;
         }
     }

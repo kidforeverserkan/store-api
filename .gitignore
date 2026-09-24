@@ -34,3 +34,14 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Playwright (e2e/) ###
+e2e/node_modules/
+e2e/test-results/
+e2e/playwright-report/
+
+### Local development tooling / artifacts (not part of the app) ###
+.playwright-mcp/
+.claude/
+# Source PNGs for the product WebPs; only the WebPs are shipped.
+product-image-originals/

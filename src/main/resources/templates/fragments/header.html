@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><title>fragments</title></head>
+<body>
+<th:block th:fragment="header">
+    <header class="site-header">
+        <div class="container site-header__inner">
+            <a class="brand" href="/" aria-label="Store API home">
+                <span class="brand__mark" aria-hidden="true">
+                    <!-- A shopping bag carrying an API's angle brackets: store + API. -->
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4.8 8.2h14.4l-1.05 10.6a2.2 2.2 0 0 1-2.19 1.98H8.04a2.2 2.2 0 0 1-2.19-1.98L4.8 8.2Z"/>
+                        <path d="M8.8 8.2V6.9a3.2 3.2 0 0 1 6.4 0v1.3"/>
+                        <path d="m10.1 11.9-2 2.1 2 2.1"/>
+                        <path d="m13.9 11.9 2 2.1-2 2.1"/>
+                    </svg>
+                </span>
+                <span class="brand__word" aria-hidden="true">Store <span class="brand__api">API</span></span>
+            </a>
+
+            <!-- Desktop: these sit inline in the bar. Below 960px they move into
+                 the menu panel opened by the menu button. -->
+            <div id="site-menu" class="site-menu">
+                <nav class="primary-nav" aria-label="Main">
+                    <ul>
+                        <li><a href="/shop">Shop</a></li>
+                        <li><a href="/shop">Categories</a></li>
+                        <li><a href="/about">About</a></li>
+                        <li><a href="/contact">Contact</a></li>
+                    </ul>
+                </nav>
+
+                <form class="site-search" role="search" action="/shop" method="get">
+                    <label class="visually-hidden" for="site-search">Search products</label>
+                    <svg class="site-search__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/></svg>
+                    <input id="site-search" name="q" type="search" placeholder="Search products…" autocomplete="off" enterkeyhint="search"
+                           role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="search-listbox">
+                    <div id="search-panel" class="search-panel" hidden>
+                        <ul id="search-listbox" class="search-panel__list" role="listbox" aria-label="Matching products"></ul>
+                        <p class="search-panel__empty" hidden></p>
+                        <a class="search-panel__all" href="/shop" hidden></a>
+                    </div>
+                </form>
+
+                <span id="server-status" class="status-pill status-pill--checking" role="status">
+                    <span class="status-dot" aria-hidden="true"></span>
+                    <span id="server-status-text">Checking server…</span>
+                </span>
+            </div>
+
+            <div class="site-actions">
+                <div class="currency-switcher">
+                    <button id="currency-button" class="currency-switcher__button" type="button"
+                            aria-haspopup="menu" aria-expanded="false" aria-controls="currency-menu"
+                            aria-label="Currency: DKK">
+                        <span id="currency-current">DKK</span>
+                        <svg class="currency-switcher__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="m6 9 6 6 6-6"/>
+                        </svg>
+                    </button>
+                    <ul id="currency-menu" class="currency-switcher__menu" role="menu" aria-label="Choose currency" hidden>
+                        <li role="none">
+                            <button type="button" role="menuitemradio" aria-checked="true" data-currency="DKK" tabindex="-1">
+                                <svg class="currency-switcher__check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17.5 19 7"/></svg>
+                                <span class="currency-switcher__code">DKK</span>
+                                <span class="currency-switcher__name">Danish krone</span>
+                            </button>
+                        </li>
+                        <li role="none">
+                            <button type="button" role="menuitemradio" aria-checked="false" data-currency="EUR" tabindex="-1">
+                                <svg class="currency-switcher__check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17.5 19 7"/></svg>
+                                <span class="currency-switcher__code">EUR</span>
+                                <span class="currency-switcher__name">Euro</span>
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+
+                <a id="account-link" class="header-action" href="/login">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M4.8 20a7.2 7.2 0 0 1 14.4 0"/></svg>
+                    <span id="account-label" class="header-action__label">Sign in</span>
+                </a>
+
+                <a href="/cart" class="header-action nav-cart">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h2l2.2 10.2a1.5 1.5 0 0 0 1.5 1.2h8.6a1.5 1.5 0 0 0 1.5-1.1L21 8H6.2"/><circle cx="9.5" cy="19.5" r="1.2"/><circle cx="17" cy="19.5" r="1.2"/></svg>
+                    <span class="visually-hidden">Cart</span>
+                    <span id="cart-count" class="cart-badge" hidden>0</span>
+                </a>
+
+                <button id="menu-toggle" class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-menu" aria-label="Open menu">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true">
+                        <path class="menu-toggle__top" d="M4 7h16"/>
+                        <path class="menu-toggle__mid" d="M4 12h16"/>
+                        <path class="menu-toggle__bot" d="M4 17h16"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <p id="site-announcer" class="visually-hidden" aria-live="polite"></p>
+    </header>
+    <script type="module" src="/js/nav.js"></script>
+</th:block>
+</body>
+</html>

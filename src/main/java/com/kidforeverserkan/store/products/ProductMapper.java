@@ -10,6 +10,9 @@ public interface ProductMapper {
     @Mapping(target = "categoryId", source = "category.id")
     ProductDto toDto(Product product);
 
+    // id is server-assigned: copying a client-supplied id here made
+    // POST /products overwrite the existing product with that id.
+    @Mapping(target = "id", ignore = true)
     @Mapping(target = "category", ignore = true)
     Product toEntity(ProductDto productDto);
 

@@ -1,5 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Application" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+    <option name="ACTIVE_PROFILES" value="dev" />
     <module name="store" />
     <option name="SPRING_BOOT_MAIN_CLASS" value="com.kidforeverserkan.store.StoreApplication" />
     <method v="2">

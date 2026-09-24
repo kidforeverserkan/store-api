@@ -1,50 +1,53 @@
-        package com.kidforeverserkan.store.payments;
+package com.kidforeverserkan.store.payments;
 
-        import com.kidforeverserkan.store.exceptions.ErrorDto;
-        import com.kidforeverserkan.store.exceptions.CartEmptyException;
-        import com.kidforeverserkan.store.exceptions.CartNotFoundException;
-        import com.kidforeverserkan.store.orders.OrderRepository;
-        import lombok.RequiredArgsConstructor;
-        import org.springframework.http.HttpStatus;
-        import org.springframework.http.ResponseEntity;
-        import org.springframework.web.bind.annotation.*;
-        import jakarta.validation.Valid;
+import com.kidforeverserkan.store.exceptions.ErrorDto;
+import com.kidforeverserkan.store.exceptions.CartEmptyException;
+import com.kidforeverserkan.store.exceptions.CartNotFoundException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
-        import java.util.Map;
+import java.util.Map;
 
-        @RequiredArgsConstructor
-        @RestController
-        @RequestMapping("/checkout")
-        public class CheckoutController {
+@RequiredArgsConstructor
+@RestController
+@RequestMapping("/checkout")
+public class CheckoutController {
 
-            private final CheckoutService checkoutService;
-            private final OrderRepository orderRepository;
+    private final CheckoutService checkoutService;
 
 
 
-            @PostMapping
-            public CheckoutResponse checkout(@Valid @RequestBody CheckoutRequest request) {
-                return checkoutService.checkout(request);
-            }
+    @PostMapping
+    public CheckoutResponse checkout(@Valid @RequestBody CheckoutRequest request) {
+        return checkoutService.checkout(request);
+    }
 
-            @PostMapping("/webhook")
-            public void handleWebhook(
-                    @RequestHeader Map<String, String> headers,
-                @RequestBody String payload
-            ){
-                checkoutService.handleWebhookEvent( new WebhookRequest(headers, payload));
-            }
+    @PostMapping("/webhook")
+    public void handleWebhook(
+            @RequestHeader Map<String, String> headers,
+        @RequestBody String payload
+    ){
+        checkoutService.handleWebhookEvent( new WebhookRequest(headers, payload));
+    }
 
-            @ExceptionHandler(PaymentException.class)
-            public ResponseEntity<?> handlePaymentException(){
-                return ResponseEntity
-                        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body(new ErrorDto("Error creating a checkout session"));
-            }
+    @ExceptionHandler(PaymentException.class)
+    public ResponseEntity<?> handlePaymentException(){
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ErrorDto("Error creating a checkout session"));
+    }
 
-            @ExceptionHandler({CartNotFoundException.class, CartEmptyException.class})
-            public ResponseEntity<ErrorDto> handleException(Exception ex) {
-                return ResponseEntity.badRequest().body(new ErrorDto(ex.getMessage()));
-            }
+    @ExceptionHandler(WebhookVerificationException.class)
+    public ResponseEntity<ErrorDto> handleWebhookVerification(){
+        return ResponseEntity.badRequest().body(new ErrorDto("Invalid webhook signature"));
+    }
 
-        }
+    @ExceptionHandler({CartNotFoundException.class, CartEmptyException.class})
+    public ResponseEntity<ErrorDto> handleException(Exception ex) {
+        return ResponseEntity.badRequest().body(new ErrorDto(ex.getMessage()));
+    }
+
+}
