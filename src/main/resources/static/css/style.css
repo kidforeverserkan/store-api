@@ -3242,12 +3242,23 @@ a.cart-item__name:hover {
     padding: 0 0.5rem 0 0.65rem;
   }
 
+  /* Phones: a shorter hero (~20% less) so the page below starts sooner. The
+     photo still fills the whole hero behind the copy; only the photo-only
+     band above the headline and the vertical gaps are tighter. */
   .hero {
-    padding-top: 14rem;
+    padding-block: 6rem var(--space-4);
+  }
+
+  .hero__inner {
+    gap: var(--space-3);
   }
 
   .hero__title {
     font-size: clamp(2.2rem, 11vw, 2.8rem);
+  }
+
+  .hero__actions {
+    margin-bottom: var(--space-4);
   }
 
   .hero__actions .btn {
@@ -3256,7 +3267,7 @@ a.cart-item__name:hover {
 
   .trust-list {
     flex-direction: column;
-    gap: var(--space-3);
+    gap: var(--space-2);
   }
 
   .section {
