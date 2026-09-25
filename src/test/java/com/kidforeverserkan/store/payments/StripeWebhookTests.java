@@ -1,8 +1,15 @@
 package com.kidforeverserkan.store.payments;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kidforeverserkan.store.auth.JwtService;
+import com.kidforeverserkan.store.cart.Cart;
+import com.kidforeverserkan.store.cart.CartRepository;
 import com.kidforeverserkan.store.currency.SupportedCurrency;
 import com.kidforeverserkan.store.orders.Order;
 import com.kidforeverserkan.store.orders.OrderRepository;
+import com.kidforeverserkan.store.products.Category;
+import com.kidforeverserkan.store.products.Product;
+import com.kidforeverserkan.store.products.ProductRepository;
 import com.kidforeverserkan.store.users.Role;
 import com.kidforeverserkan.store.users.User;
 import com.kidforeverserkan.store.users.UserRepository;
@@ -15,6 +22,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 
 import java.math.BigDecimal;
 import java.net.URI;
@@ -24,6 +32,8 @@ import java.net.http.HttpResponse;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
 
 /**
  * Drives the Stripe webhook endpoint over a real HTTP connection to the
@@ -48,24 +58,44 @@ class StripeWebhookTests {
     @Autowired
     private OrderRepository orderRepository;
 
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
+    private CartRepository cartRepository;
+
+    @Autowired
+    private JwtService jwtService;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    // The real gateway, so webhook signature verification and event parsing
+    // run for real. Only creating the Stripe checkout session (a network
+    // call) is stubbed, in the test that goes through checkout.
+    @MockitoSpyBean
+    private StripePaymentGateway paymentGateway;
+
     private final HttpClient http = HttpClient.newHttpClient();
 
     private Order order;
 
     @BeforeEach
     void setUp() {
-        var user = new User();
-        user.setName("Webhook Customer");
-        user.setEmail("webhook-" + UUID.randomUUID() + "@example.com");
-        user.setPassword("not-used");
-        user.setRole(Role.USER);
-        user = userRepository.save(user);
-
         order = new Order();
-        order.setCustomer(user);
+        order.setCustomer(saveCustomer("Webhook Customer"));
         order.setStatus(PaymentStatus.PENDING);
         order.setTotalPrice(new BigDecimal("10.00"));
         order = orderRepository.save(order);
+    }
+
+    private User saveCustomer(String name) {
+        var user = new User();
+        user.setName(name);
+        user.setEmail("webhook-" + UUID.randomUUID() + "@example.com");
+        user.setPassword("not-used");
+        user.setRole(Role.USER);
+        return userRepository.save(user);
     }
 
     private String event(String type, Long orderId) {
@@ -159,5 +189,108 @@ class StripeWebhookTests {
 
         assertThat(response.statusCode()).isEqualTo(400);
         assertThat(currentStatus()).isEqualTo(PaymentStatus.PENDING);
+    }
+
+    // Stripe delivers webhooks at least once, so the same payment
+    // confirmation can arrive twice. The order is created at checkout; the
+    // confirmation only settles it. Replaying the confirmation must leave the
+    // customer with the one order they placed (still Paid, same items and
+    // amounts) and be acknowledged with 200 so Stripe stops retrying.
+    @Test
+    void replayedPaymentConfirmation_leavesCustomerWithExactlyOnePaidOrder() throws Exception {
+        var customer = saveCustomer("Replay Customer");
+        var product = saveProduct("Mechanical Keyboard", "89.50");
+        var cart = cartRepository.save(new Cart());
+        cart.addItem(product);
+        cart.addItem(product);
+        cart = cartRepository.save(cart);
+        doReturn(new CheckoutSession("https://stripe.example.com/session/test"))
+                .when(paymentGateway).createCheckoutSession(any());
+        var ordersBefore = orderRepository.count();
+
+        var checkout = postCheckout(customer, cart);
+        assertThat(checkout.statusCode()).isEqualTo(200);
+        var orderId = objectMapper.readTree(checkout.body()).get("orderId").asLong();
+        assertThat(orderRepository.getOrdersByCustomer(customer)).singleElement()
+                .satisfies(o -> assertThat(o.getStatus()).isEqualTo(PaymentStatus.PENDING));
+
+        // The exact same delivery (same bytes, same signature), twice.
+        var payload = event("payment_intent.succeeded", orderId);
+        var signature = sign(payload);
+
+        var first = post(payload, signature);
+
+        assertThat(first.statusCode()).isEqualTo(200);
+        var confirmed = orderRepository.getOrdersByCustomer(customer);
+        assertThat(confirmed).singleElement().satisfies(o -> {
+            assertThat(o.getId()).isEqualTo(orderId);
+            assertThat(o.getStatus()).isEqualTo(PaymentStatus.Paid);
+        });
+        var original = confirmed.get(0);
+
+        var replay = post(payload, signature);
+
+        assertThat(replay.statusCode()).isEqualTo(200);
+        assertThat(orderRepository.count()).isEqualTo(ordersBefore + 1);
+        assertThat(orderRepository.getOrdersByCustomer(customer)).singleElement().satisfies(o -> {
+            assertThat(o.getId()).isEqualTo(orderId);
+            assertThat(o.getStatus()).isEqualTo(PaymentStatus.Paid);
+            assertThat(o.getCurrency()).isEqualTo(SupportedCurrency.DKK);
+            assertThat(o.getTotalPrice()).isEqualByComparingTo("179.00");
+            assertThat(o.getCreatedAt()).isEqualTo(original.getCreatedAt());
+            assertThat(o.getItems()).singleElement().satisfies(item -> {
+                assertThat(item.getProduct().getId()).isEqualTo(product.getId());
+                assertThat(item.getQuantity()).isEqualTo(2);
+                assertThat(item.getUnitPrice()).isEqualByComparingTo("89.50");
+                assertThat(item.getTotalPrice()).isEqualByComparingTo("179.00");
+            });
+        });
+    }
+
+    // Stripe also doesn't guarantee delivery order: a retried failure from an
+    // earlier declined attempt can land after the payment went through. A
+    // paid order must stay paid.
+    @Test
+    void lateFailureEvent_afterPaymentSucceeded_leavesOrderPaid() throws Exception {
+        var succeeded = event("payment_intent.succeeded", order.getId());
+        assertThat(post(succeeded, sign(succeeded)).statusCode()).isEqualTo(200);
+
+        var failed = event("payment_intent.payment_failed", order.getId());
+        var response = post(failed, sign(failed));
+
+        assertThat(response.statusCode()).isEqualTo(200);
+        assertThat(currentStatus()).isEqualTo(PaymentStatus.Paid);
+    }
+
+    // The reverse is a normal retry (card declined, then another card
+    // works) and must still settle the order as paid.
+    @Test
+    void paymentSucceeded_afterEarlierFailure_marksOrderPaid() throws Exception {
+        var failed = event("payment_intent.payment_failed", order.getId());
+        assertThat(post(failed, sign(failed)).statusCode()).isEqualTo(200);
+
+        var succeeded = event("payment_intent.succeeded", order.getId());
+        var response = post(succeeded, sign(succeeded));
+
+        assertThat(response.statusCode()).isEqualTo(200);
+        assertThat(currentStatus()).isEqualTo(PaymentStatus.Paid);
+    }
+
+    private Product saveProduct(String name, String price) {
+        var product = new Product();
+        product.setName(name);
+        product.setDescription(name);
+        product.setPrice(new BigDecimal(price));
+        product.setCategory(new Category("Webhook Test"));
+        return productRepository.save(product);
+    }
+
+    private HttpResponse<String> postCheckout(User customer, Cart cart) throws Exception {
+        var request = HttpRequest.newBuilder(URI.create("http://localhost:" + port + "/checkout"))
+                .header("Content-Type", "application/json")
+                .header("Authorization", "Bearer " + jwtService.generateAccessToken(customer))
+                .POST(HttpRequest.BodyPublishers.ofString("{\"cartId\":\"" + cart.getId() + "\"}"))
+                .build();
+        return http.send(request, HttpResponse.BodyHandlers.ofString());
     }
 }

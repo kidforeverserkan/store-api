@@ -70,6 +70,12 @@ public class CheckoutService {
                 .parseWebhookEvent(request)
                 .ifPresent(paymentResult -> {
                     var order = orderRepository.findById(paymentResult.getOrderId()).orElseThrow();
+                    // Stripe delivers events at least once and in no guaranteed
+                    // order, so a redelivered or late event must never undo a
+                    // confirmed payment. It is still acknowledged (200).
+                    if (order.getStatus() == PaymentStatus.Paid) {
+                        return;
+                    }
                     order.setStatus(paymentResult.getPaymentStatus());
                     orderRepository.save(order);
                 });
